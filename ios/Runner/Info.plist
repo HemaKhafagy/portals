@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>test_portals</string>
+	<string>Portals</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>we need access to media library</string>
+    <key>NSCameraUsageDescription</key>
+    <string>we need access to camera</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>we need access to media microphone to record audio file</string>
 </dict>
 </plist>

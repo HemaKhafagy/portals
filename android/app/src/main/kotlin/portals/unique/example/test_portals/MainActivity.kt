@@ -1,4 +1,4 @@
-package portals.unique.example.test_portals
+package portals.unique.example.Portals
 
 import io.flutter.embedding.android.FlutterActivity
 

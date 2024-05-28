@@ -1,6 +1,6 @@
 {
-    "name": "test_portals",
-    "short_name": "test_portals",
+    "name": "Portals",
+    "short_name": "Portals",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

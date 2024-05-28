@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1087257024701",
+    "project_id": "portas-dev",
+    "storage_bucket": "portas-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087257024701:android:0c02e3f5a43a9d050dbfd4",
+        "android_client_info": {
+          "package_name": "portals.unique.io.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWXQkW7V-noKxiHYb83mmyjPlA-wckHiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
