@@ -1,3 +1,4 @@
+import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/portals_config/cubit/cubit.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
@@ -15,7 +16,8 @@ class AddNewPortalThird extends StatelessWidget {
       listener: (context,state){},
       builder: (context,state){
         PortalsConfigCubit portalsCCAInstance = PortalsConfigCubit.get(context);
-        return Column(
+        return portalsCCAInstance.submitIsLoading ? buildSharedShimmer() :
+          Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -25,7 +27,7 @@ class AddNewPortalThird extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
-                          onTap: (){},
+                          onTap: (){portalsCCAInstance.decreaseAddingScreenIndex();},
                           child: const Row(
                             children: [
                               Icon(Icons.arrow_back_ios_new),
@@ -35,7 +37,7 @@ class AddNewPortalThird extends StatelessWidget {
                           ),
                         ),
                         InkWell(
-                          onTap: (){},
+                          onTap: (){navigateAndFinish(context: context, widget: const HomeTabsScreen());},
                           child: const Icon(Icons.close),
                         )
                       ],
@@ -76,7 +78,9 @@ class AddNewPortalThird extends StatelessWidget {
                         crossAxisSpacing: 5,
                         children: portalsCCAInstance.portalCodeNames.map((e) {
                           return InkWell(
-                            onTap: (){},
+                            onTap: (){
+                              portalsCCAInstance.changeCodeNameValue(e);
+                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 1),
                               decoration: BoxDecoration(
@@ -119,7 +123,7 @@ class AddNewPortalThird extends StatelessWidget {
                 ),
               ),
             ),
-            buildSharedButton(buttonName: "Set Codename", isEnabled: true, action: (){}),
+            buildSharedButton(buttonName: "Set Codename", isEnabled: true, action: (){portalsCCAInstance.submitNewPortalAdding(context: context);}),
             const SizedBox(height: 20,),
           ],
         );

@@ -1,11 +1,6 @@
-
 import 'package:Portals/layout/cubit/cubit.dart';
-import 'package:Portals/screens/portals_config/add_new_portal_second.dart';
-import 'package:Portals/screens/portals_config/adding_new_portal.dart';
-import 'package:Portals/screens/portals_config/cubit/cubit.dart';
-import 'package:Portals/screens/portals_config/join_portal_screen.dart';
+import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/splash_scree.dart';
-import 'package:Portals/screens/store/store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:Portals/screens/signup/cubit/cubit.dart';

@@ -182,12 +182,14 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
 
  Future signUpWithPhoneNumber(BuildContext context,String pin) async
  {
-   PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId!, smsCode: pin);
-   await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) {
-     navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
-   }).catchError((error){
+   try{
+     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId!, smsCode: pin);
+     await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) {
+       navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
+     });
+   }catch(error){
      print("SIGNUP WITH PHONE NUMBER ERROR  $error");
-   });
+   }
  }
 //******************************************************************************
 //******************************************************************************
@@ -221,11 +223,13 @@ Future<void> submitSignUp(BuildContext context) async
       victories: 0
   );
   await colRef.doc(auth.currentUser!.uid).set(userData.toJson())
-      .then((value) => navigateToAndCloseCurrent(context: context, widget: const CreateAvatarScreen()))
-      .catchError((error){
-
+      .then((value) {
+        changeSubmittingIsLoadingStatus();
+        navigateToAndCloseCurrent(context: context, widget: const CreateAvatarScreen());
+      }).catchError((error){
+        print("ERORR FROM submitSignUp FUNCTION CHECK IT ................................");
+        print(error);
       });
-  changeSubmittingIsLoadingStatus();
 }
 
   Future<void> addImageToFirebaseStorage({required String key,required BuildContext context ,String ? avatar, File ? file}) async

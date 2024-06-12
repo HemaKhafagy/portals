@@ -95,7 +95,11 @@ class PreferenceScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                buildSharedButton(buttonName: "Continue", isEnabled: (signUPCubitAccessInstance.genderPara != 0 && signUPCubitAccessInstance.agePara != 0 && signUPCubitAccessInstance.wantMeet.isNotEmpty && signUPCubitAccessInstance.interestedAge.isNotEmpty) ? true : false, action: (){signUPCubitAccessInstance.submitSignUp(context);}),
+                buildSharedButton(
+                    buttonName: "Continue",
+                    isEnabled: (signUPCubitAccessInstance.genderPara != 0 && signUPCubitAccessInstance.agePara != 0 && signUPCubitAccessInstance.wantMeet.isNotEmpty && signUPCubitAccessInstance.interestedAge.isNotEmpty) ? true : false,
+                    action: (){signUPCubitAccessInstance.submitSignUp(context);}
+                ),
               ],
             ),
           ),

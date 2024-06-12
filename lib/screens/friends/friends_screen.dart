@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/cubit/states.dart';
+import 'package:Portals/screens/friends/add_friend_screen.dart';
 import 'package:Portals/screens/friends/cubit/cubit.dart';
 import 'package:Portals/screens/friends/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
@@ -30,7 +31,7 @@ class FriendsScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 80,left: 10,right: 10,bottom: 10),
                   child: Column(
                     children: [
-                      buildTopNav(),
+                      buildTopNav(context),
                       const SizedBox(height: 20,),
                       buildPortal(homeTapsCubitAccess),
                       const SizedBox(height: 20,),
@@ -125,7 +126,7 @@ Widget buildCardItem(BuildContext context,int index,HomeTapsCubit homeTapsCubitA
     ],
   );
 
-  Widget buildTopNav() =>  Row(
+  Widget buildTopNav(BuildContext context) =>  Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Container(
@@ -154,7 +155,7 @@ Widget buildCardItem(BuildContext context,int index,HomeTapsCubit homeTapsCubitA
         children: [
           GestureDetector(
             onTap: (){
-
+              navigateTo(context: context, widget: const AddFriendScreen());
             },
             child: Container(
               width: 130,

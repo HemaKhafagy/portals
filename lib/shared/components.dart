@@ -9,17 +9,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 Future<dynamic> navigateTo({required context,required widget})
 {
-  return Navigator.push(context, MaterialPageRoute(builder: (context)=>widget));
+  return Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
 }
 
 Future<dynamic> navigateToAndCloseCurrent({required context,required widget})
 {
-  return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>widget));
+  return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => widget));
 }
 
 Future<dynamic> navigateAndFinish({required context,required widget})
 {
-  return Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>widget), (route) => false);
+  return Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => widget), (route) => false);
 }
 
 sharedToast({required String text}) => Fluttertoast.showToast(

@@ -14,6 +14,7 @@ class ProfilePictureScreen extends StatelessWidget {
       listener: (context,state){},
       builder: (context,state){
         SignUPCubit signUPCubitAccessInstance = SignUPCubit.get(context);
+        print(signUPCubitAccessInstance.submittingIsLoading);
         return Scaffold(
           body: Container(
             decoration: sharedContainerDecoration,

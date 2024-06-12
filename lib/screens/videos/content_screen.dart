@@ -24,6 +24,8 @@ class _ContentScreenState extends State<ContentScreen> {
     HomeTapsCubit.get(context).initializeVideoPlayer(widget.src!);
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeTapsCubit,HomeTapsCubitStates>(

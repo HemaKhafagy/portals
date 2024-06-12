@@ -1,17 +1,24 @@
+import 'dart:async';
 import 'package:Portals/layout/cubit/states.dart';
+import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/models/friends_card_model.dart';
 import 'package:Portals/models/leader_boards_model.dart';
+import 'package:Portals/models/portals.dart';
 import 'package:Portals/screens/friends/friends_screen.dart';
 import 'package:Portals/screens/leader_boards/leader_boards_screen.dart';
 import 'package:Portals/screens/portals_config/protals_home.dart';
 import 'package:Portals/screens/profile/profile_screen.dart';
 import 'package:Portals/screens/videos/explore_screen.dart';
+import 'package:Portals/shared/components.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
@@ -20,6 +27,32 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
   HomeTapsCubit() : super(HomeTapsCubitInitialState());
 
   static HomeTapsCubit get(context) => BlocProvider.of(context);
+
+//****************************************************************************
+// SPLASH SCREEN VARIABLES AMD STATES
+//****************************************************************************
+  bool splashIsLoading = false;
+
+  void changeSplashIsLoadingStatus()
+  {
+    splashIsLoading = !splashIsLoading;
+    emit(ChangeSplashIsLoadingState());
+  }
+  Future<void> checkUserExistence(BuildContext context) async
+  {
+    changeSplashIsLoadingStatus();
+    final user = await FirebaseAuth.instance.currentUser;
+    if(user != null)
+      {
+        portalsHomeInitFunction();
+        await Future.delayed(const Duration(seconds: 2));
+        navigateAndFinish(context: context, widget: const HomeTabsScreen());
+      }else{
+      changeSplashIsLoadingStatus();
+    }
+  }
+//****************************************************************************
+//****************************************************************************
 
 
 //****************************************************************************
@@ -58,15 +91,59 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
 //****************************************************************************
 // PORTALS HOME SCREEN VARIABLES AMD STATES
 //****************************************************************************
+  int portalCatSelectedButton = 0;
+
+  StreamSubscription<QuerySnapshot> ? portalsListSubStream;
+  List<Portals> portalsListRealData = [];
+  List<Portals> portalsList = [];
+
+
   void portalsHomeInitFunction()
   {
-
+    getPortalsList();
   }
+
   void portalsHomeDisposeFunction()
   {
-
+    print("close portalsHome streams successfully");
+    if(portalsListSubStream != null){
+      portalsListSubStream!.cancel();
+    }
   }
-  int listSelectedButton = 0;
+
+  void changePortalCatSelectedButton(int index)
+  {
+    portalCatSelectedButton = index;
+    emit(ChangePortalCatSelectedButtonState());
+  }
+
+  Future<void> getPortalsList() async
+  {
+    portalsListSubStream = FirebaseFirestore.instance.collection('Portals').snapshots().listen((event) {
+      portalsList = [];
+      portalsListRealData = [];
+      event.docs.forEach((element) {
+        addToPortalsListState(element.data());
+      });
+    });
+  }
+
+  addToPortalsListState(var data)
+  {
+    portalsList.add(Portals.fromJson(data));
+    portalsListRealData.add(Portals.fromJson(data));
+    emit(AddToPortalsListState());
+  }
+
+  void searchForPortals(String text)
+  {
+    if(text.isEmpty || text == "Tap"){
+      portalsList = portalsListRealData;
+    }else{
+      portalsList = portalsListRealData.where((element) => element.topic!.contains(text) || element.topic!.toLowerCase().contains(text)).toList();
+    }
+    emit(SearchForPortalsState());
+  }
 
 //****************************************************************************
 //****************************************************************************
@@ -233,7 +310,6 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
     videController.dispose();
     chewieController!.pause();
     chewieController!.dispose();
-    print("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   }
 
 

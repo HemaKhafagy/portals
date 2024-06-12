@@ -1,7 +1,8 @@
+import 'package:Portals/layout/home_taps_screen.dart';
+import 'package:Portals/models/portals.dart';
 import 'package:Portals/screens/portals_config/cubit/cubit.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
-import 'package:Portals/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,8 +13,6 @@ class AddNewPortalFirst extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     return BlocConsumer<PortalsConfigCubit,PortalsConfigStates>(
       listener: (context,state){},
       builder: (context,state){
@@ -25,7 +24,7 @@ class AddNewPortalFirst extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: (){},
+                    onTap: (){navigateAndFinish(context: context, widget: const HomeTabsScreen());},
                     child: const Row(
                       children: [
                         Icon(Icons.arrow_back_ios_new),
@@ -35,7 +34,7 @@ class AddNewPortalFirst extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: (){},
+                    onTap: (){navigateAndFinish(context: context, widget: const HomeTabsScreen());},
                     child: const Icon(Icons.close),
                   )
                 ],
@@ -127,9 +126,9 @@ class AddNewPortalFirst extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildListViewButton("18-24", 1,portalsCCAInstance),
-                  buildListViewButton("25-34", 2,portalsCCAInstance),
-                  buildListViewButton("35-44", 3,portalsCCAInstance)
+                  buildListViewButton(min: 18,max: 24,access: portalsCCAInstance),
+                  buildListViewButton(min: 25,max: 34,access: portalsCCAInstance),
+                  buildListViewButton(min: 35,max: 44,access: portalsCCAInstance),
                 ],
               ),
               const SizedBox(height: 35,),
@@ -141,8 +140,8 @@ class AddNewPortalFirst extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 35,),
-              (portalsCCAInstance.portalNameController.text.isNotEmpty && portalsCCAInstance.topicSelectedValue.isNotEmpty && portalsCCAInstance.newPortalAgeSelectedValue.isNotEmpty) ?
-              buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){}) :
+              (portalsCCAInstance.portalNameController.text.isNotEmpty && portalsCCAInstance.topicSelectedValue.isNotEmpty && portalsCCAInstance.ageSelectedValues.isNotEmpty) ?
+              buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){portalsCCAInstance.increaseAddingScreenIndex();}) :
               buildSharedButton(buttonName: "Continue", isEnabled: false, action: (){})
               // const Spacer(),
             ],
@@ -152,14 +151,14 @@ class AddNewPortalFirst extends StatelessWidget {
     );
   }
 
-  Widget buildListViewButton(String text,int index,PortalsConfigCubit access)=> InkWell(
-    onTap: () => access.changeANPASdRange(index,text),
+  Widget buildListViewButton({required int min, required int max, required PortalsConfigCubit access})=> InkWell(
+    onTap: () => access.changeANPASdRange(value: SubAgeRange(min: min,max: max)),
     child: Padding(
       padding: const EdgeInsets.all(2.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
         decoration: BoxDecoration(
-            gradient: index == access.newPortalAgeSelectedIndex ? const LinearGradient(
+            gradient: access.ageSelectedValues.any((element) => element.min == min) ? const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment(0.9, 1),
               colors: <Color>[
@@ -176,7 +175,7 @@ class AddNewPortalFirst extends StatelessWidget {
             border: Border.all(color: Colors.grey,width: 0.5)
         ),
         child: Center(
-          child: Text(text,style: const TextStyle(color: Colors.white,fontSize: 12,fontWeight: FontWeight.bold),),
+          child: Text("$min-$max",style: const TextStyle(color: Colors.white,fontSize: 12,fontWeight: FontWeight.bold),),
         ),
       ),
     ),

@@ -6,6 +6,15 @@ class HomeTapsCubitInitialState extends HomeTapsCubitStates {}
 //****************************************************************************
 // HOME TAPS SCREEN VARIABLES AMD STATES
 //****************************************************************************
+class ChangeSplashIsLoadingState extends HomeTapsCubitStates {}
+
+
+//****************************************************************************
+
+
+//****************************************************************************
+// HOME TAPS SCREEN VARIABLES AMD STATES
+//****************************************************************************
 class ChangeCurrentHomeIndexState extends HomeTapsCubitStates {}
 
 
@@ -15,7 +24,9 @@ class ChangeCurrentHomeIndexState extends HomeTapsCubitStates {}
 //****************************************************************************
 // PORTALS HOME SCREEN VARIABLES AMD STATES
 //****************************************************************************
-
+class AddToPortalsListState extends HomeTapsCubitStates {}
+class SearchForPortalsState extends HomeTapsCubitStates {}
+class ChangePortalCatSelectedButtonState extends HomeTapsCubitStates {}
 
 //****************************************************************************
 //****************************************************************************

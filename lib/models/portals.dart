@@ -1,4 +1,5 @@
 import 'package:Portals/models/document_info.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Portals
 {
@@ -13,6 +14,7 @@ class Portals
   DateTime ? endTime;
 
   Portals({
+    required this.documentInfo,
     required this.title,
     required this.topic,
     required this.guests,
@@ -27,12 +29,24 @@ class Portals
     title = json["title"];
     topic = json["topic"];
     guests = SubGuests.fromJson(json["guests"]);
-    ageRange = json["ageRange"].map((e) => SubAgeRange.fromJson(e));
+    ageRange = json["ageRange"].forEach((e) => SubAgeRange.fromJson(e));
     isPrivate = json["isPrivate"];
     themeRef = json["themeRef"];
     imageUrl = json["imageUrl"];
-    endTime = json["endTime"];
+    endTime = json["endTime"].toDate();
   }
+
+  Map<String,dynamic> toJson ()=> {
+    "documentInfo": documentInfo!.toJson(),
+    "title": title,
+    "topic": topic,
+    "guests": guests!.toJson(),
+    "ageRange": FieldValue.arrayUnion(ageRange!.map((e) => e.toJson()).toList()),
+    "isPrivate": isPrivate,
+    "themeRef": themeRef,
+    "imageUrl": imageUrl,
+    "endTime": endTime,
+  };
 }
 
 class  SubGuests

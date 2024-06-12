@@ -1,3 +1,4 @@
+import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/portals_config/cubit/cubit.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
@@ -21,7 +22,7 @@ class AddNewPortalSecond extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: (){},
+                    onTap: (){portalsCCAInstance.decreaseAddingScreenIndex();},
                     child: const Row(
                       children: [
                         Icon(Icons.arrow_back_ios_new),
@@ -31,7 +32,7 @@ class AddNewPortalSecond extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: (){},
+                    onTap: (){navigateAndFinish(context: context, widget: const HomeTabsScreen());},
                     child: const Icon(Icons.close),
                   )
                 ],
@@ -112,7 +113,7 @@ class AddNewPortalSecond extends StatelessWidget {
               Text(portalsCCAInstance.selectedPortalPic != null ? "That’s a Cool Image!" : "Add a cool image",style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
               const SizedBox(height: 30,),
               portalsCCAInstance.selectedThemeValues.isNotEmpty && portalsCCAInstance.selectedPortalPic != null ?
-                buildSharedButton(buttonName: "Open Portal", isEnabled: true, action: (){}) :
+                buildSharedButton(buttonName: "Open Portal", isEnabled: true, action: (){portalsCCAInstance.increaseAddingScreenIndex();}) :
                 buildSharedButton(buttonName: "Open Portal", isEnabled: false, action: (){}),
               const SizedBox(height: 30,),
             ],

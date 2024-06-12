@@ -3,6 +3,7 @@ import 'package:Portals/screens/portals_config/add_new_portal_second.dart';
 import 'package:Portals/screens/portals_config/add_new_portal_third.dart';
 import 'package:Portals/screens/portals_config/cubit/cubit.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
+import 'package:Portals/shared/components.dart';
 import 'package:Portals/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +58,7 @@ class AddingNewPortal extends StatelessWidget {
                           begin: Alignment.topCenter,
                         ),
                       ),
-                      child: const AddNewPortalThird(),
+                      child: portalsCCAInstance.addingScreenIndex == 0 ? const AddNewPortalFirst() : portalsCCAInstance.addingScreenIndex == 1 ? const AddNewPortalSecond() : const AddNewPortalThird(),
                     ),
                   ),
                 ),

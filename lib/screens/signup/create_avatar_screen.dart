@@ -46,7 +46,6 @@ class CreateAvatarScreen extends StatelessWidget {
                         right: 1,
                         child: Image.asset("assets/image/avatar-2.png",width: 140,height: 183,),
                       ),
-
                     ],
                   ),
                 ),

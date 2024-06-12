@@ -1,5 +1,7 @@
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/cubit/states.dart';
+import 'package:Portals/screens/portals_config/adding_new_portal.dart';
+import 'package:Portals/shared/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,27 +63,16 @@ class HomeTabsScreen extends StatelessWidget {
               },
             ),
           ),
-          floatingActionButton: Row(
+          floatingActionButton: homeTapsCubitAccess.currentHomeScreenIndex == 0 ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 240,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment(0.9, 1),
-                    colors: <Color>[
-                      Color(0xfff24998),
-                      Color(0xfff2845c)
-                    ],
-                  ),
-                ),
-                child: const Center(child: Text("Open New Portal",style: TextStyle(fontSize: 15,color: Colors.white),)),
-              ),
+              buildSharedButton(
+                  buttonName: "Open New Portal",
+                  isEnabled: true,
+                  action: (){navigateTo(context: context, widget: const AddingNewPortal());}
+              )
             ],
-          ),
+          ) : null,
         );
       },
     );
