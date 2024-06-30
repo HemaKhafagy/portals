@@ -207,3 +207,28 @@ Widget buildPointsComponents(int count) => Container(
     ],
   ),
 );
+
+showSharedAlertDialog({
+  required String title,
+  required String content,
+  required BuildContext context,
+  required List<Widget> actions
+}) {
+
+
+// set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: const Color.fromRGBO(17, 17, 17, 0.95),
+    title: Text(title,style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 20),textAlign: TextAlign.center,),
+    content: Text(content,style: const TextStyle(fontWeight: FontWeight.w600,fontSize: 14),textAlign: TextAlign.center,),
+    actions: actions,
+  );
+
+// show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}

@@ -43,11 +43,11 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
   TextEditingController phoneNumberController = TextEditingController();
   
   
-  void personalInfoSubmit(BuildContext context,)
+  void personalInfoSubmit(BuildContext context,bool isSignIn)
   {
     final isValid = formKey.currentState!.validate();
     if(isValid) {
-      navigateToAndCloseCurrent(context: context, widget: const OTPScreen());
+      navigateToAndCloseCurrent(context: context, widget: OTPScreen(isSignIn: isSignIn));
       verifyPhoneNumber();
     }
     emit(PersonalInfoSubmitState());
@@ -145,7 +145,15 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
 //******************************************************************************
   String ? signUpPhoneNumber;
   String ? signUpPhoneNumberSMSCode;
-  String ? signUpPhoneNumberVerificationId;
+  // we make change here from String ? to var
+  var signUpPhoneNumberVerificationId;
+  bool verifyPhoneNumberIsLoading = false;
+
+  void changeVerifyPhoneNumberIsLoadingStatus()
+  {
+    verifyPhoneNumberIsLoading = !verifyPhoneNumberIsLoading;
+    emit(ChangeVerifyPhoneNumberIsLoadingState());
+  }
 
  Future verifyPhoneNumber() async
  {
@@ -180,16 +188,42 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
    );
  }
 
- Future signUpWithPhoneNumber(BuildContext context,String pin) async
+ Future signUpWithPhoneNumber(BuildContext context,String pin,bool isSignIn) async
  {
+   changeVerifyPhoneNumberIsLoadingStatus();
    try{
-     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId!, smsCode: pin);
-     await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) {
-       navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
+     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
+     await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) async{
+       if(isSignIn){
+         await FirebaseFirestore.instance.collection("Users").doc(value.user!.uid).get().then((value) {
+           if(value.exists){
+             navigateToAndCloseCurrent(context: context, widget: const HomeTabsScreen());
+           }else{
+             showSharedAlertDialog(
+                 title: "You are not a member of portals app",
+                 content: "Please join portals app",
+                 context: context,
+                 actions: [
+                   buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+                 ]
+             );
+           }
+         });
+       }else{
+         navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
+       }
      });
-   }catch(error){
-     print("SIGNUP WITH PHONE NUMBER ERROR  $error");
+   }on FirebaseAuthException catch(error){
+     showSharedAlertDialog(
+         title: "Sorry!!!",
+         content: error.message.toString(),
+         context: context,
+         actions: [
+           buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+         ]
+     );
    }
+   changeVerifyPhoneNumberIsLoadingStatus();
  }
 //******************************************************************************
 //******************************************************************************

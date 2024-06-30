@@ -1,6 +1,7 @@
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/cubit/states.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
+import 'package:Portals/screens/signup/sign_in_screen.dart';
 import 'package:Portals/screens/signup/sign_up_personal_info.dart';
 import 'package:flutter/material.dart';
 import 'package:Portals/shared/components.dart';
@@ -18,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    HomeTapsCubit.get(context).checkUserExistence(context);
+    // HomeTapsCubit.get(context).checkUserExistence(context);
   }
 
 
@@ -82,7 +83,9 @@ class _SplashScreenState extends State<SplashScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: (){},
+                          onTap: (){
+                            navigateTo(context: context, widget: const SignInScreen());
+                            },
                           child: const Text("Sign in",style: TextStyle(fontSize: 16,color: Colors.white),),
                         ),
                         Column(

@@ -13,7 +13,13 @@ class ChangeWantAgeValueState extends SignUpCubitStates {}
 //************************************************************************************
 //User Birth Date Screen Variables
 //************************************************************************************
+class ChangeVerifyPhoneNumberIsLoadingState extends SignUpCubitStates {}
+//*************************************************************************************
+// ************************************************************************************
+//User Birth Date Screen Variables
+//************************************************************************************
 class SetUerBirthDateState extends SignUpCubitStates {}
+
 //************************************************************************************
 class SignUpInitialState extends SignUpCubitStates {}
 class ChangePreferenceValueState extends SignUpCubitStates {}

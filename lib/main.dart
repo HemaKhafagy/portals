@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/splash_scree.dart';
@@ -12,18 +14,24 @@ import 'package:firebase_core/firebase_core.dart';
 
 
 
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: 'AIzaSyDWXQkW7V-noKxiHYb83mmyjPlA-wckHiU',
-        appId: '1:1087257024701:android:0c02e3f5a43a9d050dbfd4',
-        messagingSenderId: '1087257024701',
-        projectId: 'portas-dev',
-        storageBucket: 'portas-dev.appspot.com',
-      )
-  );
+  if(Platform.isAndroid){
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: 'AIzaSyDWXQkW7V-noKxiHYb83mmyjPlA-wckHiU',
+          appId: '1:1087257024701:android:0c02e3f5a43a9d050dbfd4',
+          messagingSenderId: '1087257024701',
+          projectId: 'portas-dev',
+          storageBucket: 'portas-dev.appspot.com',
+        )
+    );
+  }else if(Platform.isIOS){
+    await Firebase.initializeApp();
+  }
+
   Bloc.observer = MyBlocObserver();
   runApp(
       MultiBlocProvider(
@@ -32,7 +40,7 @@ void main() async{
                 create: (context)=> SignUPCubit()
             ),
             BlocProvider<HomeTapsCubit>(
-                create: (context)=> HomeTapsCubit()
+                create: (context)=> HomeTapsCubit()..portalsHomeInitFunction()
             ),
           ],
           child: const MyApp()

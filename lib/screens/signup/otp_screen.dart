@@ -8,7 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class OTPScreen extends StatelessWidget {
-  const OTPScreen({super.key});
+  final bool isSignIn;
+  const OTPScreen({required this.isSignIn,super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class OTPScreen extends StatelessWidget {
                   const Text("Welcome Robert, join the party!",style: TextStyle(fontSize: 36,fontWeight: FontWeight.w700),textAlign: TextAlign.center,),
                   Column(
                     children: [
+                      signUPCubitAccessInstance.verifyPhoneNumberIsLoading ? const CircularProgressIndicator() :
                       Form(
                         key: signUPCubitAccessInstance.OTPFormKey,
                         child: Pinput(
@@ -44,7 +46,7 @@ class OTPScreen extends StatelessWidget {
                           pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                           validator: (pin) {
                             if (pin!.length == 6) {
-                              signUPCubitAccessInstance.signUpWithPhoneNumber(context,pin);
+                              signUPCubitAccessInstance.signUpWithPhoneNumber(context,pin,isSignIn);
                             }
                             /// Text will be displayed under the Pinput
                             // return 'Pin is incorrect';

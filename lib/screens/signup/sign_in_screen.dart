@@ -10,8 +10,8 @@ import 'package:Portals/shared/constants.dart';
 
 
 
-class SignUpPersonaInfo extends StatelessWidget {
-  const SignUpPersonaInfo({super.key});
+class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class SignUpPersonaInfo extends StatelessWidget {
                         Text("Hello There!",style: TextStyle(fontSize: 36,fontWeight: FontWeight.w700),),
                         SizedBox(height: 15,),
                         Text(
-                          "Let's get started, first, we are thrilled to get to\nknow you, how about you tell us a little more\nabout yourself?",
+                          "please enter our number to login",
                           style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500),
                           textAlign: TextAlign.center,
                         ),
@@ -49,24 +49,6 @@ class SignUpPersonaInfo extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildPageTextFormFiled(signUPCubitAccess.firstNameController,"John","First Name",(String? value) {
-                            if (value!.isEmpty) {
-                              return 'Invalid name!';
-                            }
-                            return null;
-                          }),
-                          buildPageTextFormFiled(signUPCubitAccess.lastNameController,"Doe","Last Name",(String? value) {
-                            if (value!.isEmpty) {
-                              return 'Invalid name!';
-                            }
-                            return null;
-                          }),
-                          buildPageTextFormFiled(signUPCubitAccess.emailController,"Jdoe@gmail.com","Email",(String? value) {
-                            if (value!.isEmpty || !value.contains('@')) {
-                              return 'Invalid email!';
-                            }
-                            return null;
-                          }),
                           SizedBox(
                             height: 30,
                             child: IntlPhoneField(
@@ -101,9 +83,7 @@ class SignUpPersonaInfo extends StatelessWidget {
                     ),
                     Column(
                       children: [
-                        buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){signUPCubitAccess.personalInfoSubmit(context,false);}),
-                        const SizedBox(height: 15,),
-                        const Text("Only your first name is public",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500),),
+                        buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){signUPCubitAccess.personalInfoSubmit(context,true);}),
                       ],
                     ),
                   ],
@@ -115,31 +95,4 @@ class SignUpPersonaInfo extends StatelessWidget {
       },
     );
   }
-
-
-  Widget buildPageTextFormFiled(TextEditingController controller,String hintText,String labelText,var validator) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(
-        height: 30,
-        child: TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-              contentPadding: // Text Field height
-              const EdgeInsets.symmetric(vertical: 8.0,),
-              hintText: hintText,
-              hintStyle: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w200)
-          ),
-          onSaved: (String? value) {
-            // This optional block of code can be used to run
-            // code when the user saves the form.
-          },
-          validator: validator,
-        ),
-      ),
-      const SizedBox(height: 3,),
-      Text(labelText,style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
-      const SizedBox(height: 20,),
-    ],
-  );
 }
