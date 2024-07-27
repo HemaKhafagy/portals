@@ -35,18 +35,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-
-  flutter_lints: ^3.0.0
   font_awesome_flutter: ^10.7.0
   google_fonts: ^6.2.1
   intl_phone_field: ^3.2.0
@@ -56,11 +44,11 @@ dev_dependencies:
   pinput: ^4.0.0
   firebase_core: ^2.30.1
   cloud_firestore: ^4.17.2
-#  image picker make hint error in compile
+  #  image picker make hint error in compile
   image_picker: ^1.1.1
   fluttermoji: ^1.0.2
   flutter_svg: ^2.0.10+1
-#  firebase auth make x-lint deprecation error
+  #  firebase auth make x-lint deprecation error
   firebase_auth: ^4.19.4
   video_player: ^2.8.6
   card_swiper: ^3.0.1
@@ -70,6 +58,33 @@ dev_dependencies:
   gradient_borders: ^1.0.0
   fluttertoast: ^8.2.5
   firebase_storage: ^11.7.6
+  firebase_messaging: ^14.9.3
+  flutter_local_notifications: ^17.2.1+1
+  in_app_purchase: ^3.2.0
+  country_picker: ^2.0.26
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/image/profile.png"
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+
+  flutter_lints: ^3.0.0
+
+
+
 
 
 

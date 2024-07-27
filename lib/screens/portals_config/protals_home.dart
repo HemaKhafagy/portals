@@ -4,7 +4,9 @@ import 'package:Portals/models/portals.dart';
 import 'package:Portals/screens/notification_screen.dart';
 import 'package:Portals/screens/store/store_screen.dart';
 import 'package:Portals/shared/components.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../../shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,7 +61,7 @@ class PortalsHomeScreen extends StatelessWidget {
                       itemCount: homeTapsCubitAccess.portalsList.length,
                       separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
                       itemBuilder: (BuildContext context, int index) {
-                        return buildCardItem(homeTapsCubitAccess.portalsList[index]);
+                        return buildCardItem(context,homeTapsCubitAccess.portalsList[index]);
                       },
                     )
                 ),
@@ -105,7 +107,7 @@ class PortalsHomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget buildCardItem(Portals portal) => Row(
+  Widget buildCardItem(BuildContext context,Portals portal) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Row(
@@ -125,7 +127,10 @@ class PortalsHomeScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(portal.title!,style: const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w800)),
+              SizedBox(
+                width: MediaQuery.of(context).size.width*0.37,
+                child: Text(portal.title!,style: const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w800),maxLines: 1,overflow: TextOverflow.ellipsis,),
+              ),
               Text(portal.topic!,style: const TextStyle(color: Colors.white,fontSize: 12)),
             ],
           ),

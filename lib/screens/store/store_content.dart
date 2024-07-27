@@ -51,10 +51,11 @@ class StoreContent extends StatelessWidget {
                   children: [
                     const SizedBox(height: 10,),
                     const Text("Stardust",style: TextStyle(fontSize: 24,fontWeight: FontWeight.w700),),
+                    storeCubitAccess.starDusts.isEmpty ? SizedBox() :
                     SizedBox(
                       height: 170,
                       child: ListView.separated(
-                        itemCount: storeCubitAccess.stardustList.length,
+                        itemCount: storeCubitAccess.starDusts.length,
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.all(10),
                         separatorBuilder: (BuildContext context, int index) {
@@ -81,17 +82,29 @@ class StoreContent extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image.asset(storeCubitAccess.stardustList[index].imageUrl!),
-                                Text("${storeCubitAccess.stardustList[index].amount} Stardust",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 20),
-                                  decoration: BoxDecoration(
-                                      color: const Color.fromRGBO(31, 22, 50, 1),
-                                      border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
-                                      borderRadius: BorderRadius.circular(10)
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: buildSharedImageFromNetwork(storeCubitAccess.starDusts[index].imageUrl!),
                                   ),
-                                  child: Center(
-                                    child: Text("\$ ${storeCubitAccess.stardustList[index].price}",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
+                                ),
+                                Text("${storeCubitAccess.starDusts[index].amount} Stardust",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
+                                InkWell(
+                                  onTap: (){
+                                    storeCubitAccess.changeExchangeIsOpenedStatus(storeCubitAccess.starDusts[index]);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 20),
+                                    decoration: BoxDecoration(
+                                        color: const Color.fromRGBO(31, 22, 50, 1),
+                                        border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Center(
+                                      child: Text("\$ ${storeCubitAccess.starDusts[index].price}",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
+                                    ),
                                   ),
                                 )
                               ],

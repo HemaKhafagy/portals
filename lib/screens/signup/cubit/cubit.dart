@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/signup/create_avatar_screen.dart';
+import 'package:Portals/shared/notification_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Portals/models/document_info.dart';
 import 'package:Portals/models/user_model.dart';
@@ -48,7 +49,7 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
     final isValid = formKey.currentState!.validate();
     if(isValid) {
       navigateToAndCloseCurrent(context: context, widget: OTPScreen(isSignIn: isSignIn));
-      verifyPhoneNumber();
+      verifyPhoneNumber(context);
     }
     emit(PersonalInfoSubmitState());
   }
@@ -155,10 +156,10 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
     emit(ChangeVerifyPhoneNumberIsLoadingState());
   }
 
- Future verifyPhoneNumber() async
+ Future verifyPhoneNumber(BuildContext context) async
  {
-
-   FirebaseAuth.instance.verifyPhoneNumber(
+   changeVerifyPhoneNumberIsLoadingStatus();
+   await FirebaseAuth.instance.verifyPhoneNumber(
      phoneNumber: signUpPhoneNumber,
      verificationCompleted: (PhoneAuthCredential credential) {
        print("PHONE AUTHENTICATION VERIFICATION COMPLETED ${credential.smsCode}");
@@ -185,7 +186,17 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
        // Handle other errors
      },
      // timeout: const Duration(seconds: 60),
-   );
+   ).catchError((error){
+     showSharedAlertDialog(
+         title: "Something wrong ...",
+         content: "Please rejoin portals app",
+         context: context,
+         actions: [
+           buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+         ]
+     );
+   });
+   changeVerifyPhoneNumberIsLoadingStatus();
  }
 
  Future signUpWithPhoneNumber(BuildContext context,String pin,bool isSignIn) async
@@ -194,6 +205,7 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
    try{
      PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
      await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) async{
+       NotificationHandler.saveTokenToDatabase();
        if(isSignIn){
          await FirebaseFirestore.instance.collection("Users").doc(value.user!.uid).get().then((value) {
            if(value.exists){
@@ -248,6 +260,7 @@ Future<void> submitSignUp(BuildContext context) async
       ),
       firstName: firstNameController.text,
       lastName: lastNameController.text,
+      email: emailController.text,
       dateOfBirth: userBirthDate,
       gender: genderValue,
       interestedIn: wantMeet,
@@ -281,9 +294,18 @@ Future<void> submitSignUp(BuildContext context) async
       navigateAndFinish(context: context, widget: const HomeTabsScreen());
     }catch(error)
     {
-      throw error;
+      showSharedAlertDialog(
+          title: "photo can't uploaded",
+          content: "Please try again",
+          context: context,
+          actions: [
+            buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+          ]
+      );
+      changeSubmittingIsLoadingStatus();
+      // navigateAndFinish(context: context, widget: const HomeTabsScreen());
     }
-    changeSubmittingIsLoadingStatus();
+
   }
 
 

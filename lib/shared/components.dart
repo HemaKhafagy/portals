@@ -25,9 +25,9 @@ Future<dynamic> navigateAndFinish({required context,required widget})
 sharedToast({required String text}) => Fluttertoast.showToast(
     msg: text,
     toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.CENTER,
+    gravity: ToastGravity.TOP,
     timeInSecForIosWeb: 1,
-    backgroundColor: Colors.red,
+    backgroundColor: Color.fromRGBO(0, 0, 0, 1),
     textColor: Colors.white,
     fontSize: 16.0
 );

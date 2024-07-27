@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // HomeTapsCubit.get(context).checkUserExistence(context);
+    HomeTapsCubit.get(context).checkUserExistence(context);
   }
 
 

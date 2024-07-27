@@ -10,6 +10,7 @@ import 'package:Portals/screens/portals_config/protals_home.dart';
 import 'package:Portals/screens/profile/profile_screen.dart';
 import 'package:Portals/screens/videos/explore_screen.dart';
 import 'package:Portals/shared/components.dart';
+import 'package:Portals/shared/notification_handler.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,11 +42,11 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
   Future<void> checkUserExistence(BuildContext context) async
   {
     changeSplashIsLoadingStatus();
+    await NotificationHandler.handelNotification();
     final user = await FirebaseAuth.instance.currentUser;
     if(user != null)
       {
         portalsHomeInitFunction();
-        await Future.delayed(const Duration(seconds: 2));
         navigateAndFinish(context: context, widget: const HomeTabsScreen());
       }else{
       changeSplashIsLoadingStatus();
@@ -470,6 +471,71 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
 
   }
 
+
+  TextEditingController editProfileFirstNameController = TextEditingController();
+  TextEditingController editProfileLastNameController = TextEditingController();
+  TextEditingController editProfileEmailController = TextEditingController();
+  TextEditingController editAboutYouController = TextEditingController();
+  TextEditingController editCountryController = TextEditingController();
+  TextEditingController editCityController = TextEditingController();
+  bool updateUserDataIsLoading = false;
+  void changeUpdateUserDataIsLoadingState()
+  {
+    updateUserDataIsLoading = !updateUserDataIsLoading;
+    emit(ChangeUpdateUserDataIsLoadingState());
+  }
+  Future updateUserData(BuildContext context) async
+  {
+    changeUpdateUserDataIsLoadingState();
+    if(
+    editProfileFirstNameController.text.isEmpty &&
+    editProfileLastNameController.text.isEmpty &&
+    editProfileEmailController.text.isEmpty &&
+    editAboutYouController.text.isEmpty &&
+    editCountryController.text.isEmpty &&
+    editCityController.text.isEmpty
+    ){
+      showSharedAlertDialog(
+          title: "",
+          content: "Please enter data do you need to edit it",
+          context: context,
+          actions: [
+            buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+          ]
+      );
+    }else {
+      final user = FirebaseAuth.instance.currentUser;
+      await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+        if(editProfileFirstNameController.text.isNotEmpty) "firstName": editProfileFirstNameController.text,
+        if(editProfileLastNameController.text.isNotEmpty) "lastName": editProfileLastNameController.text,
+        if(editProfileEmailController.text.isNotEmpty) "email": editProfileEmailController.text,
+        if(editAboutYouController.text.isNotEmpty) "about": editAboutYouController.text,
+        if(editCountryController.text.isNotEmpty) "country": editCountryController.text,
+        if(editCityController.text.isNotEmpty) "city": editCityController.text,
+      }).then((value) {
+        print("UPDATE USER DATA Successfully.......................");
+        editProfileFirstNameController.clear();
+        editProfileLastNameController.clear();
+        editProfileEmailController.clear();
+        editAboutYouController.clear();
+        editCountryController.clear();
+        editCityController.clear();
+        Navigator.of(context).pop();
+        sharedToast(text: "Your Data Updated Successfully");
+        // showSharedAlertDialog(
+        //     title: "Congrats!",
+        //     content: "Your Data Updated Successfully",
+        //     context: context,
+        //     actions: [
+        //       buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+        //     ]
+        // );
+      }).catchError((error){
+        print("UPDATE USER DATA GOT ERROR.......................");
+      });
+    }
+    changeUpdateUserDataIsLoadingState();
+  }
 //****************************************************************************
 //****************************************************************************
 

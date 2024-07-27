@@ -10,6 +10,7 @@ class UserModel
   DocumentInfo ? documentInfo;
   String ? firstName;
   String ? lastName;
+  String ? email;
   DateTime ? dateOfBirth;
   String ? gender;
   List<dynamic> ? interestedIn;
@@ -25,6 +26,7 @@ class UserModel
     this.documentInfo,
     required this.firstName,
     required this.lastName,
+    required this.email,
     required this.dateOfBirth,
     required this.gender,
     required this.interestedIn,
@@ -41,6 +43,7 @@ class UserModel
   {
     firstName = json["firstName"];
     lastName = json["lastName"];
+    email = json["email"];
     dateOfBirth = json["dateOfBirth"];
     gender = json["gender"];
     interestedIn = json["interestedIn"];
@@ -57,6 +60,7 @@ class UserModel
     "documentInfo": documentInfo!.toJson(),
     "firstName":firstName,
     "lastName":lastName,
+    "email":email,
     "dateOfBirth":dateOfBirth,
     "gender":gender,
     "interestedIn": FieldValue.arrayUnion(interestedIn!),

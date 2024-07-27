@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/splash_scree.dart';
+import 'package:Portals/shared/notification_handler.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:Portals/screens/signup/cubit/cubit.dart';
@@ -10,14 +12,26 @@ import 'package:Portals/shared/bloc_observer.dart';
 import 'package:Portals/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 
+  RemoteNotification? notification = message.notification;
+  final user = FirebaseAuth.instance.currentUser;
+  if(user != null) {
+
+  }
+}
 
 void main() async{
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+
   if(Platform.isAndroid){
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -31,6 +45,9 @@ void main() async{
   }else if(Platform.isIOS){
     await Firebase.initializeApp();
   }
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
 
   Bloc.observer = MyBlocObserver();
   runApp(

@@ -1,5 +1,6 @@
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/cubit/states.dart';
+import 'package:Portals/screens/profile/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:Portals/shared/components.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -90,9 +91,27 @@ class ProfileScreen extends StatelessWidget {
                                           minWidth: screenWidth*0.4
                                         ),
                                         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                                          popupMenuItem('',FontAwesomeIcons.gamepad,"Send Game Invite"),
-                                          popupMenuItem('',FontAwesomeIcons.gift,"Send a Gift"),
-                                          popupMenuItem('',FontAwesomeIcons.userLock,"Block User"),
+                                          popupMenuItem('',FontAwesomeIcons.gamepad,"Send Game Invite",(){}),
+                                          popupMenuItem('',FontAwesomeIcons.gift,"Send a Gift",(){}),
+                                          popupMenuItem('',FontAwesomeIcons.userLock,"Block User",(){}),
+                                          popupMenuItem('',FontAwesomeIcons.edit,"Edit Profile",(){
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  padding: const EdgeInsets.all(15.0),
+                                                  clipBehavior: Clip.hardEdge,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(14),
+                                                  ),
+                                                  child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      child: EditProfile()
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }),
                                         ],
                                       )
                                     ],
@@ -234,8 +253,9 @@ Widget  buildStaticCom(double count,String text) => Column(
      ],
    );
 
-   PopupMenuEntry popupMenuItem(String value,IconData icon,String label) => PopupMenuItem(
+   PopupMenuEntry popupMenuItem(String value,IconData icon,String label,VoidCallback action) => PopupMenuItem(
      value: value,
+     onTap: action,
      child: Row(
        mainAxisAlignment: MainAxisAlignment.spaceBetween,
        children: [

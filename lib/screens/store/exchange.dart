@@ -52,7 +52,7 @@ class Exchange extends StatelessWidget {
                         child: buildPointsComponents(5000),
                       ),
                       InkWell(
-                        onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(),
+                        onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(null),
                         child: Container(
                           padding: const EdgeInsets.all(3.0),
                           decoration: const BoxDecoration(
@@ -114,7 +114,13 @@ class Exchange extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: storeCubitAccess.isExchanged ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
                                   children: [
-                                    buildSharedButton(buttonName: "EXCHANGE", isEnabled: true, width: screenWidth*0.4,height: 40,action: (){storeCubitAccess.changeIsExchangedStatus();}),
+                                    buildSharedButton(buttonName: "EXCHANGE", isEnabled: true, width: screenWidth*0.4,height: 40,action: () async{
+                                      storeCubitAccess.changeIsExchangedStatus();
+                                      await Future.delayed(Duration(seconds: 1));
+                                      storeCubitAccess.changeExchangeIsOpenedStatus(storeCubitAccess.selectedStarDust);
+                                      storeCubitAccess.buyRequest(context, storeCubitAccess.selectedStarDust!.id!);
+                                      storeCubitAccess.changeIsExchangedStatus();
+                                    }),
                                     if(!storeCubitAccess.isExchanged)
                                     Expanded(
                                       child: Row(
