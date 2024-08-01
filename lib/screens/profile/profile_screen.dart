@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               buildSharedImageFromNetwork(
-                  "https://s3-alpha-sig.figma.com/img/12d4/22f2/e20c1e0ad7f0fb2a477e2a910d924539?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LCEePyLuXDUHfFUxL~ZE3SRSU5G-p5Q4BVinx5q9EkkrsvbpgtGcph2Ftee091eHJ1Ot22ibQmsPheAWoUYjVSOCLHkL6qeo7fVZeS9wdjWXUlEMaxfhi-bPjbB6AUw9X7bckfypV4A1okAkj2js3lr10egLIZ8FLk2EzfJsVePIm6W5QbKKFhI2w~0GAOzo35sus1TyURiXH5SxrBSLiO1oaWzJL6Jzg0TEgYm8jxK808~VPF2LfPW~ez6QhfaIRQYavQHsGtVFPNdRfCkHhdL-Xa4irNPsBMf-dNokb95mT3godx9zezDiD-xi-WbyZXaKLQrQZKIXD6EBLuUgoA__",
+                  homeTapsCubitAccess.userData!.imageURL == null ? "" : homeTapsCubitAccess.userData!.imageURL!,
                   fit: BoxFit.cover
               ),
               Positioned(
@@ -68,12 +68,12 @@ class ProfileScreen extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(width: screenWidth*0.3,),
-                                      const Column(
+                                      Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text("Jane Doe",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700),),
-                                          Text("Female, 26",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600)),
-                                          Text("Los Angeles, USA",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600)),
+                                          Text("${homeTapsCubitAccess.userData!.firstName} ${homeTapsCubitAccess.userData!.lastName}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700),),
+                                          Text("${homeTapsCubitAccess.userData!.gender}",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600)),
+                                          Text("${homeTapsCubitAccess.userData!.country}, ${homeTapsCubitAccess.userData!.city}",style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600)),
                                         ],
                                       ),
                                       // const Icon(FontAwesomeIcons.ellipsisVertical),

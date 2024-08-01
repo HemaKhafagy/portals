@@ -28,7 +28,7 @@ class PortalsHomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 80,left: 10,right: 10,bottom: 10),
                 child: Column(
                   children: [
-                    buildTopNav(context),
+                    buildTopNav(context,homeTapsCubitAccess.userData!.stardust!,homeTapsCubitAccess),
                     const SizedBox(height: 20,),
                     buildPortal(homeTapsCubitAccess),
                     const SizedBox(height: 20,),
@@ -166,12 +166,12 @@ class PortalsHomeScreen extends StatelessWidget {
     ],
   );
 
-  Widget buildTopNav(BuildContext context) =>  Row(
+  Widget buildTopNav(BuildContext context,int stardust,HomeTapsCubit homeTapsCubitAccess) =>  Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       InkWell(
-        onTap: () => navigateTo(context: context,widget: const StoreScreen()),
-        child: buildPointsComponents(5000),
+        onTap: () => navigateTo(context: context,widget: StoreScreen(userStarDust: stardust,homeTapsCubitAccess: homeTapsCubitAccess,)),
+        child: buildPointsComponents(stardust),
       ),
       InkWell(
         onTap: () => navigateTo(context: context,widget: const NotificationScreen()),

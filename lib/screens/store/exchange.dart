@@ -16,8 +16,9 @@ class Exchange extends StatelessWidget {
   final String selectedAvatarURL;
   final String selectedAvatarName;
   final int amount;
+  final int stardust;
 
-  const Exchange({super.key,required this.selectedAvatarURL,required this.selectedAvatarName,required this.amount});
+  const Exchange({super.key,required this.selectedAvatarURL,required this.selectedAvatarName,required this.amount,required this.stardust});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class Exchange extends StatelessWidget {
                             border: Border.all(color: const Color.fromRGBO(242, 132, 92, 1),width: 2),
                             borderRadius: BorderRadius.circular(50)
                         ),
-                        child: buildPointsComponents(5000),
+                        child: buildPointsComponents(stardust),
                       ),
                       InkWell(
                         onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(null),

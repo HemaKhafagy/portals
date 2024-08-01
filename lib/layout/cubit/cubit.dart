@@ -4,6 +4,7 @@ import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/models/friends_card_model.dart';
 import 'package:Portals/models/leader_boards_model.dart';
 import 'package:Portals/models/portals.dart';
+import 'package:Portals/models/user_model.dart';
 import 'package:Portals/screens/friends/friends_screen.dart';
 import 'package:Portals/screens/leader_boards/leader_boards_screen.dart';
 import 'package:Portals/screens/portals_config/protals_home.dart';
@@ -12,6 +13,7 @@ import 'package:Portals/screens/videos/explore_screen.dart';
 import 'package:Portals/shared/components.dart';
 import 'package:Portals/shared/notification_handler.dart';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,6 +48,7 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
     final user = await FirebaseAuth.instance.currentUser;
     if(user != null)
       {
+        await getUserData();
         portalsHomeInitFunction();
         navigateAndFinish(context: context, widget: const HomeTabsScreen());
       }else{
@@ -54,6 +57,31 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
   }
 //****************************************************************************
 //****************************************************************************
+
+  UserModel ? userData;
+  Future<void> getUserData() async
+  {
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get().then((value) async{
+      userData = UserModel.fromJson(value.data()!);
+      print(userData);
+      var ref = FirebaseStorage.instance.ref().child("${user.uid}/data/portalProfile");
+      print(ref);
+      userData!.imageURL = (await ref.getDownloadURL()).toString();
+    }).catchError((error){
+      // handel your error
+      print("ERROR FROM GET USER DATA METHOD");
+      print(error);
+    });
+  }
+
+  void incrementStarDustValue(int value)
+  {
+    print("incrementStarDustValue ........................................");
+    print(userData);
+    userData!.stardust = userData!.stardust! + value;
+    emit(IncrementStarDustValue());
+  }
 
 
 //****************************************************************************
@@ -512,7 +540,8 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
         if(editAboutYouController.text.isNotEmpty) "about": editAboutYouController.text,
         if(editCountryController.text.isNotEmpty) "country": editCountryController.text,
         if(editCityController.text.isNotEmpty) "city": editCityController.text,
-      }).then((value) {
+      }).then((value) async{
+        await getUserData();
         print("UPDATE USER DATA Successfully.......................");
         editProfileFirstNameController.clear();
         editProfileLastNameController.clear();

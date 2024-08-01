@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/signup/create_avatar_screen.dart';
 import 'package:Portals/shared/notification_handler.dart';
@@ -199,41 +200,54 @@ class SignUPCubit extends Cubit<SignUpCubitStates>
    changeVerifyPhoneNumberIsLoadingStatus();
  }
 
+ TextEditingController OTPController = TextEditingController();
  Future signUpWithPhoneNumber(BuildContext context,String pin,bool isSignIn) async
  {
    changeVerifyPhoneNumberIsLoadingStatus();
-   try{
-     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
-     await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) async{
-       NotificationHandler.saveTokenToDatabase();
-       if(isSignIn){
-         await FirebaseFirestore.instance.collection("Users").doc(value.user!.uid).get().then((value) {
-           if(value.exists){
-             navigateToAndCloseCurrent(context: context, widget: const HomeTabsScreen());
-           }else{
-             showSharedAlertDialog(
-                 title: "You are not a member of portals app",
-                 content: "Please join portals app",
-                 context: context,
-                 actions: [
-                   buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
-                 ]
-             );
-           }
-         });
-       }else{
-         navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
-       }
-     });
-   }on FirebaseAuthException catch(error){
+   if(signUpPhoneNumberVerificationId == null){
+     OTPController.clear();
      showSharedAlertDialog(
-         title: "Sorry!!!",
-         content: error.message.toString(),
+         title: "warning!!!",
+         content: "Please add code again",
          context: context,
          actions: [
            buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
          ]
      );
+   }else{
+     try{
+       PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
+       await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) async{
+         NotificationHandler.saveTokenToDatabase();
+         if(isSignIn){
+           await FirebaseFirestore.instance.collection("Users").doc(value.user!.uid).get().then((value) {
+             if(value.exists){
+               navigateToAndCloseCurrent(context: context, widget: const HomeTabsScreen());
+             }else{
+               showSharedAlertDialog(
+                   title: "You are not a member of portals app",
+                   content: "Please join portals app",
+                   context: context,
+                   actions: [
+                     buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+                   ]
+               );
+             }
+           });
+         }else{
+           navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
+         }
+       });
+     }on FirebaseAuthException catch(error){
+       showSharedAlertDialog(
+           title: "Sorry!!!",
+           content: error.message.toString(),
+           context: context,
+           actions: [
+             buildSharedButton(buttonName: "Close", isEnabled: true, action: (){Navigator.of(context).pop();}),
+           ]
+       );
+     }
    }
    changeVerifyPhoneNumberIsLoadingStatus();
  }
@@ -282,18 +296,23 @@ Future<void> submitSignUp(BuildContext context) async
   Future<void> addImageToFirebaseStorage({required String key,required BuildContext context ,String ? avatar, File ? file}) async
   {
     changeSubmittingIsLoadingStatus();
+    final user = FirebaseAuth.instance.currentUser;
     try
     {
       Uint8List ? bytes = file != null ? await file.readAsBytes() : null;
       Reference ref = FirebaseStorage.instance
           .ref()
-          .child('userid')
+          .child(user!.uid)
           .child("data")
           .child(key);
       key == "avatar" ? await ref.putString(avatar!) : await ref.putData(bytes!);
-      navigateAndFinish(context: context, widget: const HomeTabsScreen());
+      print(ref);
+      // navigateAndFinish(context: context, widget: const HomeTabsScreen());
+      await HomeTapsCubit()..checkUserExistence(context);
     }catch(error)
     {
+      print("ERROR FROM UPLOADING IMAGE FUNCTION");
+      print(error);
       showSharedAlertDialog(
           title: "photo can't uploaded",
           content: "Please try again",

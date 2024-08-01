@@ -8,6 +8,7 @@ class UserModel
 {
 
   DocumentInfo ? documentInfo;
+  String ? imageURL;
   String ? firstName;
   String ? lastName;
   String ? email;
@@ -21,9 +22,13 @@ class UserModel
   UserLevelsModel ? currentLevel;
   int ? numFriends;
   int ? victories;
+  int ? stardust;
+  String ? country;
+  String ? city;
 
   UserModel({
     this.documentInfo,
+    this.imageURL,
     required this.firstName,
     required this.lastName,
     required this.email,
@@ -44,16 +49,19 @@ class UserModel
     firstName = json["firstName"];
     lastName = json["lastName"];
     email = json["email"];
-    dateOfBirth = json["dateOfBirth"];
+    dateOfBirth = json["dateOfBirth"].toDate();
     gender = json["gender"];
     interestedIn = json["interestedIn"];
-    interestedInAge = json["interestedInAge"];
+    interestedInAge = json["interestedInAge"].map<InterestedInAgeModel>((value)=> InterestedInAgeModel.fromJson(value)).toList();
     about = json["about"];
     userAddress = json["userAddress"];
-    badges = json["badges"];
+    badges = json["badges"] != null ? json["badges"].map<UserBadgesModel>((value)=> UserBadgesModel.fromJson(value)).toList() : json["badges"];
     currentLevel = json["currentLevel"];
     numFriends = json["numFriends"];
     victories = json["victories"];
+    stardust = json["stardust"]??0;
+    country = json["country"]??"";
+    city = json["city"]??"";
   }
 
   Map<String,dynamic> toJson() => {

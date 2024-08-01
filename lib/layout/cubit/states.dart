@@ -9,6 +9,7 @@ class HomeTapsCubitInitialState extends HomeTapsCubitStates {}
 class ChangeSplashIsLoadingState extends HomeTapsCubitStates {}
 
 
+
 //****************************************************************************
 
 
@@ -16,6 +17,7 @@ class ChangeSplashIsLoadingState extends HomeTapsCubitStates {}
 // HOME TAPS SCREEN VARIABLES AMD STATES
 //****************************************************************************
 class ChangeCurrentHomeIndexState extends HomeTapsCubitStates {}
+class IncrementStarDustValue extends HomeTapsCubitStates {}
 
 
 //****************************************************************************

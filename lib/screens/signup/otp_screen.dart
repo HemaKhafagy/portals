@@ -35,6 +35,7 @@ class OTPScreen extends StatelessWidget {
                       Form(
                         key: signUPCubitAccessInstance.OTPFormKey,
                         child: Pinput(
+                          controller: signUPCubitAccessInstance.OTPController,
                           // Without Validator
                           // If true error state will be applied no matter what validator returns
                           // forceErrorState: true,

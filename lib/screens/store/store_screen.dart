@@ -1,3 +1,4 @@
+import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/screens/store/cuibt/cubit.dart';
 import 'package:Portals/screens/store/cuibt/states.dart';
 import 'package:Portals/screens/store/exchange.dart';
@@ -9,12 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class StoreScreen extends StatelessWidget {
-  const StoreScreen({super.key});
+  int userStarDust;
+  HomeTapsCubit homeTapsCubitAccess;
+  StoreScreen({super.key,required this.userStarDust,required this.homeTapsCubitAccess});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => StoreCubit()..init(),
+      create: (BuildContext context) => StoreCubit(userCurrentStarDusts: userStarDust,homeTapsCubitAccess: homeTapsCubitAccess)..init(),
       child: BlocConsumer<StoreCubit,StoreCubitStates>(
         listener: (context,state){},
         builder: (context,state){
@@ -31,7 +34,8 @@ class StoreScreen extends StatelessWidget {
                        Exchange(
                         selectedAvatarURL: storeCubitAccess.selectedStarDust!.imageUrl!,
                         selectedAvatarName: storeCubitAccess.selectedStarDust!.name!,
-                          amount: storeCubitAccess.selectedStarDust!.amount!,
+                         amount: storeCubitAccess.selectedStarDust!.amount!,
+                         stardust: storeCubitAccess.userCurrentStarDusts,
                       ),
                     if(storeCubitAccess.isDone)
                       const IsDone()

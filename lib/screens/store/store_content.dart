@@ -1,3 +1,4 @@
+import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/screens/store/cuibt/cubit.dart';
 import 'package:Portals/screens/store/cuibt/states.dart';
 import 'package:Portals/shared/components.dart';
@@ -26,7 +27,7 @@ class StoreContent extends StatelessWidget {
                         border: Border.all(color: const Color.fromRGBO(242, 132, 92, 1),width: 2),
                         borderRadius: BorderRadius.circular(50)
                     ),
-                    child: buildPointsComponents(5000),
+                    child: buildPointsComponents(storeCubitAccess.userCurrentStarDusts),
                   ),
                   buildNotificationComponent(3)
                 ],

@@ -51,19 +51,19 @@ class EditProfile extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileFirstNameController,"John","First Name",false,(String? value) {
+                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileFirstNameController,"${homeTapsCubitAccess.userData!.firstName}","First Name",false,(String? value) {
                           if (value!.isEmpty) {
                             return 'Invalid name!';
                           }
                           return null;
                         }),
-                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileLastNameController,"Doe","Last Name",false,(String? value) {
+                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileLastNameController,"${homeTapsCubitAccess.userData!.lastName}","Last Name",false,(String? value) {
                           if (value!.isEmpty) {
                             return 'Invalid name!';
                           }
                           return null;
                         }),
-                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileEmailController,"Jdoe@gmail.com","Email",false,(String? value) {
+                        buildPageTextFormFiled(homeTapsCubitAccess.editProfileEmailController,"${homeTapsCubitAccess.userData!.email}","Email",false,(String? value) {
                           if (value!.isEmpty || !value.contains('@')) {
                             return 'Invalid email!';
                           }
@@ -71,10 +71,10 @@ class EditProfile extends StatelessWidget {
                         }),
                         Row(
                           children: [
-                            buildDropDownButton(context,screenWidth,homeTapsCubitAccess.editCountryController),
+                            buildDropDownButton(context,screenWidth,homeTapsCubitAccess.editCountryController,homeTapsCubitAccess.userData!.country!),
                             const SizedBox(width: 10,),
                             Expanded(
-                              child: buildPageTextFormFiled(homeTapsCubitAccess.editCityController,"","City",false,(String? value) {
+                              child: buildPageTextFormFiled(homeTapsCubitAccess.editCityController,"${homeTapsCubitAccess.userData!.city}","City",false,(String? value) {
                                 if (value!.isEmpty) {
                                   return 'Invalid City!';
                                 }
@@ -83,7 +83,7 @@ class EditProfile extends StatelessWidget {
                             ),
                           ],
                         ),
-                        buildPageTextFormFiled(homeTapsCubitAccess.editAboutYouController,"I just changed my description","About",true,(String? value) {
+                        buildPageTextFormFiled(homeTapsCubitAccess.editAboutYouController,"${homeTapsCubitAccess.userData!.about}","About",true,(String? value) {
                           return null;
                         }),
                       ],
@@ -108,7 +108,7 @@ class EditProfile extends StatelessWidget {
     );
   }
   
-  Widget buildDropDownButton(BuildContext context,double screenWidth,TextEditingController controller) => Container(
+  Widget buildDropDownButton(BuildContext context,double screenWidth,TextEditingController controller,String hint) => Container(
     width: screenWidth*0.4,
     child: Column(
       children: [
@@ -117,9 +117,10 @@ class EditProfile extends StatelessWidget {
           child: TextField(
             controller: controller,
             readOnly: true,
-            // decoration: InputDecoration(
-            //   labelStyle: const TextStyle(color: Colors.white,fontSize: 5,fontWeight: FontWeight.w200),
-            // ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w200),
+            ),
             onTap: (){
               showCountryPicker(
                 context: context,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 
+import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/models/star_dust_model.dart';
 import 'package:Portals/models/stickers&gifts_model.dart';
 import 'package:Portals/screens/store/cuibt/states.dart';
@@ -16,8 +17,9 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 class StoreCubit extends Cubit<StoreCubitStates>
 {
-
-  StoreCubit() : super(StoreCubitInitialState());
+  int userCurrentStarDusts;
+  HomeTapsCubit homeTapsCubitAccess;
+  StoreCubit({required this.userCurrentStarDusts,required this.homeTapsCubitAccess}) : super(StoreCubitInitialState());
 
   static StoreCubit get(context) => BlocProvider.of(context);
 
@@ -25,6 +27,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
   bool isExchanged = false;
   bool isDone = false;
   StarDustModel ? selectedStarDust;
+
 
   // List<StarDustModel> stardustList = [
   //   StarDustModel(imageUrl: "assets/image/moon.png", amount: 100, price: 0.99),
@@ -198,11 +201,15 @@ class StoreCubit extends Cubit<StoreCubitStates>
     final user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
       "stardust": FieldValue.increment(value)
-    }).then((value) {
+    }).then((resValue) async{
       print("User Amount Updated Successfully.......................");
+      userCurrentStarDusts = userCurrentStarDusts+value;
+      homeTapsCubitAccess.incrementStarDustValue(value);
     }).catchError((error){
       print("User Amount Update GOT ERROR.......................");
+      print(error);
     });
+    emit(IncrementUserStarDusts());
   }
 
   int extractDustNumbers(String input) {
@@ -229,6 +236,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
   @override
   Future<void> close() async {
     await _subscription.cancel();
+
     return super.close();
   }
 }
