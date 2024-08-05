@@ -27,6 +27,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
   bool isExchanged = false;
   bool isDone = false;
   StarDustModel ? selectedStarDust;
+  StickersAndGiftsModel ? selectedSG;
 
 
   // List<StarDustModel> stardustList = [
@@ -42,12 +43,22 @@ class StoreCubit extends Cubit<StoreCubitStates>
     "Chocolate",
   ];
 
-  List<StickersAndGiftsModel> sgCardList = [
-    StickersAndGiftsModel(imageUrl: "assets/image/smile.png",amount: 5),
-    StickersAndGiftsModel(imageUrl: "assets/image/smile.png",amount: 6),
-    StickersAndGiftsModel(imageUrl: "assets/image/smile.png",amount: 7),
-    StickersAndGiftsModel(imageUrl: "assets/image/smile.png",amount: 8),
-  ];
+  List<StickersAndGiftsModel> sgCardList = [];
+
+  Future getItemsData() async {
+    await FirebaseFirestore.instance.collection('StoreItems')
+        .get()
+        .then((QuerySnapshot<Map<String, dynamic>> querySnapshot) {
+      sgCardList = [];
+      querySnapshot.docs.forEach((DocumentSnapshot<Map<String, dynamic>> doc) {
+        sgCardList.add(StickersAndGiftsModel.fromJson(doc.data()!));
+      });
+    }).catchError((error){
+      print("sgCardList ERROR .......................");
+      print(error);
+    });
+  }
+
 
   void changeIsExchangedStatus()
   {
@@ -55,9 +66,19 @@ class StoreCubit extends Cubit<StoreCubitStates>
     emit(ChangeIsExchangedState());
   }
 
-  void changeExchangeIsOpenedStatus(StarDustModel ? sStarDust)
+  void
+  changeExchangeIsOpenedStatus({required type,StarDustModel ? sStarDust,StickersAndGiftsModel ? SG})
   {
-    selectedStarDust = sStarDust;
+    if(type == "clear"){
+      selectedStarDust = null;
+    }else if(type == "buyStarDust"){
+      selectedStarDust = sStarDust;
+    }else if(type == "buySG"){
+      // selectedStarDust!.imageUrl = SG!.imageUrl;
+      // selectedStarDust!.amount = SG.amount;
+      // selectedStarDust!.name = "buySG";
+      selectedStarDust = StarDustModel(amount: SG!.amount,imageUrl: SG.imageUrl,name: "buySG", id: '', price: 0);
+    }
     exchangeIsOpened = !exchangeIsOpened;
     emit(ChangeExchangeIsOpenedState());
   }
@@ -70,6 +91,32 @@ class StoreCubit extends Cubit<StoreCubitStates>
     isDone = !isDone;
     emit(ChangeIsDoneState());
   }
+
+  bool buySGIsLoading = false;
+
+  changeBuySGIsLoadingStatus() {
+    buySGIsLoading = !buySGIsLoading;
+    emit(ChangeBuySGIsLoadingStatus());
+  }
+  Future<void> buyStickersAndGifts(int price) async {
+    if(userCurrentStarDusts >= price){
+      changeBuySGIsLoadingStatus();
+      final user = FirebaseAuth.instance.currentUser;
+      await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+        "stardust": FieldValue.increment(-price)
+      }).then((resValue) async{
+        print("Successfully BOUGHT.......................");
+        userCurrentStarDusts = userCurrentStarDusts-price;
+        homeTapsCubitAccess.incrementStarDustValue(-price);
+        changeIsDoneStatus();
+      }).catchError((error){
+        print("GOT ERROR WHILE BUYING.......................");
+        print(error);
+      });
+      changeBuySGIsLoadingStatus();
+    }
+  }
+
 
   List<StarDustModel> starDusts = [];
 
@@ -99,6 +146,9 @@ class StoreCubit extends Cubit<StoreCubitStates>
     // We get items from db to get their IAP shop id,
     // then get the item data from the shop by Id
     changePageIsLoadingStatus();
+
+    await getItemsData();
+
     await getStarDustDataFromDB();
     for (var starDust in starDusts) {
       try {

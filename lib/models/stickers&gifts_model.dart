@@ -9,6 +9,6 @@ class StickersAndGiftsModel
   StickersAndGiftsModel.fromJson(Map<String,dynamic> json)
   {
     imageUrl = json["imageUrl"];
-    amount = json["amount"];
+    amount = json["stardustValue"];
   }
 }

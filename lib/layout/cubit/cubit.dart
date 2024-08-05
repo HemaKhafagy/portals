@@ -64,14 +64,32 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates>
     final user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance.collection('Users').doc(user!.uid).get().then((value) async{
       userData = UserModel.fromJson(value.data()!);
-      print(userData);
-      var ref = FirebaseStorage.instance.ref().child("${user.uid}/data/portalProfile");
-      print(ref);
-      userData!.imageURL = (await ref.getDownloadURL()).toString();
+      // var ref = FirebaseStorage.instance.ref().child("${user.uid}/data/profile");
+      // await ref.getDownloadURL().;
+      // userData!.imageURL = (await ref.getDownloadURL()).toString();
+      await getUserImage(user.uid);
     }).catchError((error){
       // handel your error
       print("ERROR FROM GET USER DATA METHOD");
       print(error);
+    });
+  }
+
+  Future getUserImage(String id) async{
+    var ref = FirebaseStorage.instance.ref().child("$id/data/profile");
+    await ref.getDownloadURL().then((value) async{
+      if(value.isEmpty){
+        var ref1 = FirebaseStorage.instance.ref().child("$id/data/avatar");
+        await ref.getDownloadURL().then((value1) {
+          if(value1.isEmpty){
+            userData!.imageURL = "";
+          }else{
+            userData!.imageURL = value1;
+          }
+        });
+      }else{
+        userData!.imageURL = value;
+      }
     });
   }
 

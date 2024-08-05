@@ -34,8 +34,8 @@ class StoreScreen extends StatelessWidget {
                        Exchange(
                         selectedAvatarURL: storeCubitAccess.selectedStarDust!.imageUrl!,
                         selectedAvatarName: storeCubitAccess.selectedStarDust!.name!,
-                         amount: storeCubitAccess.selectedStarDust!.amount!,
-                         stardust: storeCubitAccess.userCurrentStarDusts,
+                        amount: storeCubitAccess.selectedStarDust!.amount!,
+                        stardust: storeCubitAccess.userCurrentStarDusts,
                       ),
                     if(storeCubitAccess.isDone)
                       const IsDone()

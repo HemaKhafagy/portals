@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Portals/layout/cubit/cubit.dart';
+import 'package:Portals/screens/chat/chat_screen.dart';
 import 'package:Portals/screens/splash_scree.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
                 displayColor: Colors.white,
               )),
       home: const SplashScreen(),
+      // home: ChatScreen(),
     );
   }
 }
