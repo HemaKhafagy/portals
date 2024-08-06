@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/models/star_dust_model.dart';
 import 'package:Portals/models/stickers&gifts_model.dart';
@@ -15,20 +14,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-class StoreCubit extends Cubit<StoreCubitStates>
-{
+class StoreCubit extends Cubit<StoreCubitStates> {
   int userCurrentStarDusts;
   HomeTapsCubit homeTapsCubitAccess;
-  StoreCubit({required this.userCurrentStarDusts,required this.homeTapsCubitAccess}) : super(StoreCubitInitialState());
+  StoreCubit(
+      {required this.userCurrentStarDusts, required this.homeTapsCubitAccess})
+      : super(StoreCubitInitialState());
 
   static StoreCubit get(context) => BlocProvider.of(context);
 
   bool exchangeIsOpened = false;
   bool isExchanged = false;
   bool isDone = false;
-  StarDustModel ? selectedStarDust;
-  StickersAndGiftsModel ? selectedSG;
-
+  bool isError = false;
+  StarDustModel? selectedStarDust;
+  StickersAndGiftsModel? selectedSG;
 
   // List<StarDustModel> stardustList = [
   //   StarDustModel(imageUrl: "assets/image/moon.png", amount: 100, price: 0.99),
@@ -46,50 +46,59 @@ class StoreCubit extends Cubit<StoreCubitStates>
   List<StickersAndGiftsModel> sgCardList = [];
 
   Future getItemsData() async {
-    await FirebaseFirestore.instance.collection('StoreItems')
+    await FirebaseFirestore.instance
+        .collection('StoreItems')
         .get()
         .then((QuerySnapshot<Map<String, dynamic>> querySnapshot) {
       sgCardList = [];
       querySnapshot.docs.forEach((DocumentSnapshot<Map<String, dynamic>> doc) {
-        sgCardList.add(StickersAndGiftsModel.fromJson(doc.data()!));
+        sgCardList.add(StickersAndGiftsModel.fromJson(doc.data()!, doc.id));
       });
-    }).catchError((error){
+    }).catchError((error) {
       print("sgCardList ERROR .......................");
       print(error);
     });
   }
 
-
-  void changeIsExchangedStatus()
-  {
+  void changeIsExchangedStatus() {
     isExchanged = !isExchanged;
     emit(ChangeIsExchangedState());
   }
 
-  void
-  changeExchangeIsOpenedStatus({required type,StarDustModel ? sStarDust,StickersAndGiftsModel ? SG})
-  {
-    if(type == "clear"){
+  void changeExchangeIsOpenedStatus(
+      {required type, StarDustModel? sStarDust, StickersAndGiftsModel? SG}) {
+    if (type == "clear") {
       selectedStarDust = null;
-    }else if(type == "buyStarDust"){
+    } else if (type == "buyStarDust") {
       selectedStarDust = sStarDust;
-    }else if(type == "buySG"){
-      // selectedStarDust!.imageUrl = SG!.imageUrl;
-      // selectedStarDust!.amount = SG.amount;
-      // selectedStarDust!.name = "buySG";
-      selectedStarDust = StarDustModel(amount: SG!.amount,imageUrl: SG.imageUrl,name: "buySG", id: '', price: 0);
+    } else if (type == "buySG") {
+      selectedStarDust = StarDustModel(
+          amount: SG!.amount,
+          imageUrl: SG.imageUrl,
+          title: SG.title,
+          description: SG.description,
+          name: "buySG",
+          id: SG.id,
+          price: 0);
     }
     exchangeIsOpened = !exchangeIsOpened;
     emit(ChangeExchangeIsOpenedState());
   }
 
-  Future<void> changeIsDoneStatus() async
-  {
+  Future<void> changeIsDoneStatus() async {
     isDone = !isDone;
     emit(ChangeIsDoneState());
     await Future.delayed(const Duration(seconds: 2));
     isDone = !isDone;
     emit(ChangeIsDoneState());
+  }
+
+  Future<void> changeIsErrorStatus() async {
+    isError = !isError;
+    emit(ChangeIsErrorState());
+    await Future.delayed(const Duration(seconds: 2));
+    isError = !isError;
+    emit(ChangeIsErrorState());
   }
 
   bool buySGIsLoading = false;
@@ -98,35 +107,69 @@ class StoreCubit extends Cubit<StoreCubitStates>
     buySGIsLoading = !buySGIsLoading;
     emit(ChangeBuySGIsLoadingStatus());
   }
-  Future<void> buyStickersAndGifts(int price) async {
-    if(userCurrentStarDusts >= price){
+
+  Future<void> buyStickersAndGifts(int price, String id) async {
+    if (userCurrentStarDusts >= price) {
       changeBuySGIsLoadingStatus();
       final user = FirebaseAuth.instance.currentUser;
-      await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
-        "stardust": FieldValue.increment(-price)
-      }).then((resValue) async{
+
+      final firestore = FirebaseFirestore.instance;
+
+      final stickerDoc = await firestore.collection('StoreItems').doc(id).get();
+
+      final stickerData = stickerDoc.data()!;
+
+      final sameItemDoc = await firestore
+          .collection('Users')
+          .doc(user!.uid)
+          .collection('StickersAndGifts')
+          .doc(id)
+          .get();
+      if (sameItemDoc.exists) {
+        // increment count by 1
+        sameItemDoc.reference.update({"count": FieldValue.increment(1)});
+      } else {
+        // add item to user's collection
+        await firestore
+            .collection('Users')
+            .doc(user.uid)
+            .collection('StickersAndGifts')
+            .doc(id)
+            .set({
+          "data": stickerData,
+          "count": 1,
+        });
+      }
+
+      await firestore.collection('Users').doc(user!.uid).update(
+          {"stardust": FieldValue.increment(-price)}).then((resValue) async {
         print("Successfully BOUGHT.......................");
-        userCurrentStarDusts = userCurrentStarDusts-price;
+        userCurrentStarDusts = userCurrentStarDusts - price;
         homeTapsCubitAccess.incrementStarDustValue(-price);
         changeIsDoneStatus();
-      }).catchError((error){
+      }).catchError((error) {
         print("GOT ERROR WHILE BUYING.......................");
         print(error);
       });
       changeBuySGIsLoadingStatus();
+    } else {
+      changeIsErrorStatus();
+      print("Not Enough Star Dusts.......................");
     }
   }
-
 
   List<StarDustModel> starDusts = [];
 
   Future getStarDustDataFromDB() async {
-    await FirebaseFirestore.instance.collection('Stardust').get().then((QuerySnapshot<Map<String, dynamic>> querySnapshot) {
+    await FirebaseFirestore.instance
+        .collection('Stardust')
+        .get()
+        .then((QuerySnapshot<Map<String, dynamic>> querySnapshot) {
       starDusts = [];
       querySnapshot.docs.forEach((DocumentSnapshot<Map<String, dynamic>> doc) {
         starDusts.add(StarDustModel.fromJson(doc.data()!));
       });
-    }).catchError((error){
+    }).catchError((error) {
       print("STAR DUSTS ERROR .......................");
       print(error);
     });
@@ -135,8 +178,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
   var productDetails;
   bool pageIsLoading = false;
 
-  void changePageIsLoadingStatus()
-  {
+  void changePageIsLoadingStatus() {
     pageIsLoading = !pageIsLoading;
     emit(ChangePageIsLoadingState());
   }
@@ -152,7 +194,8 @@ class StoreCubit extends Cubit<StoreCubitStates>
     await getStarDustDataFromDB();
     for (var starDust in starDusts) {
       try {
-        final response = await InAppPurchase.instance.queryProductDetails({starDust.id!});
+        final response =
+            await InAppPurchase.instance.queryProductDetails({starDust.id!});
         final ProductDetails productData = response.productDetails.first;
         productDetails.addAll({starDust.id: productData});
         // productDetails.add({starDust.id!: productData});
@@ -168,7 +211,8 @@ class StoreCubit extends Cubit<StoreCubitStates>
 
   bool buyInProgress = false;
 
-  Future<void> buyRequest(BuildContext context,String SelectedId,[bool closeLoading = true]) async {
+  Future<void> buyRequest(BuildContext context, String SelectedId,
+      [bool closeLoading = true]) async {
     // check if there is no buy operation in progress first
     if (!buyInProgress) {
       // set buy operation in progress to true
@@ -189,7 +233,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
       } catch (e, stackTrace) {
         // This was happening every now and then while developing
         buyInProgress = false;
-        if (e is PlatformException){
+        if (e is PlatformException) {
           if (e.code == 'storekit_duplicate_product_object' && Platform.isIOS) {
             try {
               var transactions = await SKPaymentQueueWrapper().transactions();
@@ -197,7 +241,7 @@ class StoreCubit extends Cubit<StoreCubitStates>
                 await SKPaymentQueueWrapper().finishTransaction(transaction);
               }
               print("recursion starts");
-              buyRequest(context,SelectedId,false);
+              buyRequest(context, SelectedId, false);
             } on Exception catch (ee) {
               print('Error trying to finish transactions: $ee');
               // S.logError('Error trying to finish transactions $ee, Product: ${selectedPotionPack!.id}', stackTrace: stackTrace);
@@ -246,16 +290,14 @@ class StoreCubit extends Cubit<StoreCubitStates>
     });
   }
 
-  Future<void> incrementUserStarDusts(int value) async
-  {
+  Future<void> incrementUserStarDusts(int value) async {
     final user = FirebaseAuth.instance.currentUser;
-    await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
-      "stardust": FieldValue.increment(value)
-    }).then((resValue) async{
+    await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update(
+        {"stardust": FieldValue.increment(value)}).then((resValue) async {
       print("User Amount Updated Successfully.......................");
-      userCurrentStarDusts = userCurrentStarDusts+value;
+      userCurrentStarDusts = userCurrentStarDusts + value;
       homeTapsCubitAccess.incrementStarDustValue(value);
-    }).catchError((error){
+    }).catchError((error) {
       print("User Amount Update GOT ERROR.......................");
       print(error);
     });
@@ -271,17 +313,17 @@ class StoreCubit extends Cubit<StoreCubitStates>
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   init() {
     getStarDustData();
-    final Stream<List<PurchaseDetails>> purchaseUpdated = InAppPurchase.instance.purchaseStream;
-    _subscription = purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-          _listenToPurchaseUpdated(purchaseDetailsList);
-        },
-        onDone: () {
-          _subscription.cancel();
-        }, onError: (error) {
-          // handle error here.
-        });
+    final Stream<List<PurchaseDetails>> purchaseUpdated =
+        InAppPurchase.instance.purchaseStream;
+    _subscription =
+        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
+      _listenToPurchaseUpdated(purchaseDetailsList);
+    }, onDone: () {
+      _subscription.cancel();
+    }, onError: (error) {
+      // handle error here.
+    });
   }
-
 
   @override
   Future<void> close() async {

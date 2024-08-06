@@ -22,7 +22,6 @@ class ProfileScreen extends StatelessWidget {
           body: Stack(
             fit: StackFit.expand,
             children: [
-              buildSharedImageFromNetwork("https://s3-alpha-sig.figma.com/img/12d4/22f2/e20c1e0ad7f0fb2a477e2a910d924539?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=KzSKOcSecBpGna7RJ8jL17UwmL39BlAqsFosQlpkpH4BfhYFOBBX4RSWK0aDwzO0X4cTX4mhjzxZuqiRnmQvJZ0VnFW~unXQ9n4U-HBhC8R~j~VL-o00Dmyv5PEkqaYoxSHd5TTepLiPTfkxJAzuV5Mb0kQyiIlA5-Ahw2ZOiObHPC76RXBm5pF3C8DaXd6VVc~z1T0OSfp9Hx5y0U49yjZzsh2FHG55SJivmrUdFhOaeIqE2lkgahkGtUiDUpIR0NJ0qDT0hBS8pyLcfwy0TWcliD8b7n32AJzT2P6CFy2WlIN5tNTc~1onAwILGXFr58uZVBpRsmAmPnoPufgEZA__"),
               Positioned(
                 top: screenHeight * 0.07,
                 right: 20,
@@ -74,32 +73,42 @@ class ProfileScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(width: screenWidth*0.3,),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${homeTapsCubitAccess.userData!.firstName} ${homeTapsCubitAccess.userData!.lastName}",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700
+                                      SizedBox(
+                                        width: screenWidth * 0.3,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 35.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 170,
+                                              child: Text(
+                                                "${homeTapsCubitAccess.userData!.firstName} ${homeTapsCubitAccess.userData!.lastName} aaaaaaa",
+                                                style: TextStyle(
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                              "${homeTapsCubitAccess.userData!.gender}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600
-                                              )
-                                          ),
-                                          Text(
-                                              "${homeTapsCubitAccess.userData!.country}, ${homeTapsCubitAccess.userData!.city}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600
-                                              )
-                                          ),
-                                        ],
+                                            Text(
+                                                "${homeTapsCubitAccess.userData!.gender}",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                            Text(
+                                                "${homeTapsCubitAccess.userData!.country}, ${homeTapsCubitAccess.userData!.city}",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                          ],
+                                        ),
                                       ),
                                       // const Icon(FontAwesomeIcons.ellipsisVertical),
                                       PopupMenuButton(
@@ -115,21 +124,6 @@ class ProfileScreen extends StatelessWidget {
                                             minWidth: screenWidth * 0.4),
                                         itemBuilder: (BuildContext context) =>
                                             <PopupMenuEntry>[
-                                          // popupMenuItem(
-                                          //     '',
-                                          //     FontAwesomeIcons.gamepad,
-                                          //     "Send Game Invite",
-                                          //     () {}),
-                                          // popupMenuItem(
-                                          //     '',
-                                          //     FontAwesomeIcons.gift,
-                                          //     "Send a Gift",
-                                          //     () {}),
-                                          // popupMenuItem(
-                                          //     '',
-                                          //     FontAwesomeIcons.userLock,
-                                          //     "Block User",
-                                          //     () {}),
                                           popupMenuItem(
                                               '',
                                               FontAwesomeIcons.edit,
@@ -197,12 +191,6 @@ class ProfileScreen extends StatelessWidget {
                                             const SizedBox(
                                               height: 15,
                                             ),
-                                            // buildSharedButton(
-                                            //     buttonName: "Invite To Portal",
-                                            //     isEnabled: true,
-                                            //     width: screenWidth * 0.9,
-                                            //     height: 50,
-                                            //     action: () {}),
                                             const SizedBox(
                                               height: 15,
                                             ),
@@ -297,14 +285,24 @@ class ProfileScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            BGItems(
-                                                "Jane’s Badges",
-                                                homeTapsCubitAccess
-                                                    .listOfUserBadges),
-                                            BGItems(
-                                                "Jane’s Gifts",
-                                                homeTapsCubitAccess
-                                                    .listOfUserGifts)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 25.0),
+                                              child: BGItems(
+                                                  "Your Badges",
+                                                  homeTapsCubitAccess
+                                                      .listOfUserBadges),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 25.0),
+                                              child: BGItems(
+                                                  "Your Gifts",
+                                                  homeTapsCubitAccess
+                                                      .listOfUserGifts),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -317,18 +315,25 @@ class ProfileScreen extends StatelessWidget {
                         Positioned(
                           top: 0,
                           left: 20,
-                          child: InkWell(
-                            onTap: () => homeTapsCubitAccess
-                                .changeProfileDetailsIsOpenedStatus(),
-                            child: CircleAvatar(
-                              radius: screenHeight * 0.075,
-                              backgroundColor: const Color(0xfff2845c),
-                              child: SizedBox(
-                                width: screenHeight * 0.18,
-                                height: screenHeight * 0.18,
-                                child: ClipOval(
-                                  child:  buildSharedImageFromNetwork(homeTapsCubitAccess.userData!.imageURL == null ? "" : homeTapsCubitAccess.userData!.imageURL!),
-                                ),
+                          child: CircleAvatar(
+                            radius: screenHeight * 0.075,
+                            backgroundColor: const Color(0xfff2845c),
+                            child: SizedBox(
+                              width: screenHeight * 0.18,
+                              height: screenHeight * 0.18,
+                              child: ClipOval(
+                                child: buildSharedImageFromNetwork(
+                                    homeTapsCubitAccess.userData!.imageURL ==
+                                            null
+                                        ? ""
+                                        : homeTapsCubitAccess
+                                            .userData!.imageURL!,
+                                    errorWidget: Center(
+                                      child: Image.asset(
+                                          "assets/image/profile.png",
+                                          width: 80,
+                                          height: 80),
+                                    )),
                               ),
                             ),
                           ),
@@ -374,67 +379,52 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          SizedBox(
-            height: 70,
-            child: ListView.separated(
-              itemCount: urls.length,
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(width: 10);
-              },
-              itemBuilder: (context, index) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: buildSharedImageFromNetwork(urls[index]),
-                );
-              },
+          if (urls.isNotEmpty)
+            SizedBox(
+              height: 70,
+              child: ListView.separated(
+                itemCount: urls.length,
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(width: 10);
+                },
+                itemBuilder: (context, index) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: buildSharedImageFromNetwork(urls[index]),
+                  );
+                },
+              ),
             ),
-          ),
+          if (urls.isEmpty)
+            Center(
+              child: Text('No $name yet',
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white)),
+            ),
           const SizedBox(
             height: 15,
           ),
         ],
       );
 
- Widget BGItems(String name,List urls) => Column(
-     children: [
-       const SizedBox(height: 10,),
-       Row(
-         mainAxisAlignment: MainAxisAlignment.start,
-         children: [
-           Text(name,style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 16),)
-         ],
-       ),
-       const SizedBox(height: 10,),
-       SizedBox(
-         height: 70,
-         child: ListView.separated(
-           itemCount: urls.length,
-           scrollDirection: Axis.horizontal,
-           separatorBuilder: (BuildContext context, int index) {
-             return const SizedBox(width: 10);
-           },
-           itemBuilder: (context,index){
-             return ClipRRect(
-               borderRadius: BorderRadius.circular(50),
-               child: buildSharedImageFromNetwork(urls[index]),
-             );
-           },
-         ),
-       ),
-       const SizedBox(height: 15,),
-     ],
-   );
-
-   PopupMenuEntry popupMenuItem(String value,IconData icon,String label,VoidCallback action) => PopupMenuItem(
-     value: value,
-     onTap: action,
-     child: Row(
-       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-       children: [
-         Icon(icon),
-         Text(label,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w600,color: Colors.white)),
-       ],
-     ),
-   );
+  PopupMenuEntry popupMenuItem(
+          String value, IconData icon, String label, VoidCallback action) =>
+      PopupMenuItem(
+        value: value,
+        onTap: action,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(icon),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white)),
+          ],
+        ),
+      );
 }

@@ -11,9 +11,9 @@ class StoreContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<StoreCubit,StoreCubitStates>(
-      listener: (context,state){},
-      builder: (context,state){
+    return BlocConsumer<StoreCubit, StoreCubitStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
         StoreCubit storeCubitAccess = StoreCubit.get(context);
         return Column(
           children: [
@@ -24,10 +24,12 @@ class StoreContent extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: const Color.fromRGBO(242, 132, 92, 1),width: 2),
-                        borderRadius: BorderRadius.circular(50)
-                    ),
-                    child: buildPointsComponents(storeCubitAccess.userCurrentStarDusts),
+                        border: Border.all(
+                            color: const Color.fromRGBO(242, 132, 92, 1),
+                            width: 2),
+                        borderRadius: BorderRadius.circular(50)),
+                    child: buildPointsComponents(
+                        storeCubitAccess.userCurrentStarDusts),
                   ),
                   buildNotificationComponent(3)
                 ],
@@ -35,10 +37,13 @@ class StoreContent extends StatelessWidget {
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child:  Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text("STORE",style: TextStyle(fontSize: 24,fontWeight: FontWeight.w700),)
+                  Text(
+                    "STORE",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                  )
                 ],
               ),
             ),
@@ -46,76 +51,113 @@ class StoreContent extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: const Color.fromRGBO(16, 12, 19, 0.5)
-                ),
+                    color: const Color.fromRGBO(16, 12, 19, 0.5)),
                 child: Column(
                   children: [
-                    const SizedBox(height: 10,),
-                    const Text("Stardust",style: TextStyle(fontSize: 24,fontWeight: FontWeight.w700),),
-                    storeCubitAccess.starDusts.isEmpty ? SizedBox() :
-                    SizedBox(
-                      height: 170,
-                      child: ListView.separated(
-                        itemCount: storeCubitAccess.starDusts.length,
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.all(10),
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(width: 10);
-                        },
-                        itemBuilder: (context,index){
-                          return Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(0, 0, 0, 0.2),
-                              borderRadius: BorderRadius.circular(10),
-                              border: const GradientBoxBorder(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Color.fromRGBO(100, 82, 217, 1),
-                                      Color.fromRGBO(242, 73, 152, 1),
-                                    ]
-                                ),
-                                width: 1,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: buildSharedImageFromNetwork(storeCubitAccess.starDusts[index].imageUrl!),
-                                  ),
-                                ),
-                                Text("${storeCubitAccess.starDusts[index].amount} Stardust",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
-                                InkWell(
-                                  onTap: (){
-                                    storeCubitAccess.changeExchangeIsOpenedStatus(type: "buyStarDust",sStarDust: storeCubitAccess.starDusts[index]);
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Stardust",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                    ),
+                    storeCubitAccess.starDusts.isEmpty
+                        ? SizedBox()
+                        : SizedBox(
+                            height: 170,
+                            child: ListView.separated(
+                              itemCount: storeCubitAccess.starDusts.length,
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.all(10),
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return const SizedBox(width: 10);
+                              },
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    storeCubitAccess
+                                        .changeExchangeIsOpenedStatus(
+                                            type: "buyStarDust",
+                                            sStarDust: storeCubitAccess
+                                                .starDusts[index]);
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 20),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
                                     decoration: BoxDecoration(
-                                        color: const Color.fromRGBO(31, 22, 50, 1),
-                                        border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
-                                        borderRadius: BorderRadius.circular(10)
+                                      color: const Color.fromRGBO(0, 0, 0, 0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: const GradientBoxBorder(
+                                        gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color.fromRGBO(100, 82, 217, 1),
+                                              Color.fromRGBO(242, 73, 152, 1),
+                                            ]),
+                                        width: 1,
+                                      ),
                                     ),
-                                    child: Center(
-                                      child: Text("\$ ${storeCubitAccess.starDusts[index].price}",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(25),
+                                            child: Image.asset(
+                                              "assets/image/moon.png",
+                                              width: 22,
+                                              height: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "${storeCubitAccess.starDusts[index].amount} Stardust",
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 3, horizontal: 20),
+                                          decoration: BoxDecoration(
+                                              color: const Color.fromRGBO(
+                                                  31, 22, 50, 1),
+                                              border: Border.all(
+                                                  color: const Color.fromRGBO(
+                                                      94, 76, 131, 1)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Center(
+                                            child: Text(
+                                              "\$ ${storeCubitAccess.starDusts[index].price}",
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                )
-                              ],
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                    const SizedBox(
+                      height: 10,
                     ),
-                    const SizedBox(height: 10,),
-                    const Text("Stickers & Gifts",style: TextStyle(fontSize: 24,fontWeight: FontWeight.w700),),
+                    const Text(
+                      "Stickers & Gifts",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                    ),
                     SizedBox(
                       height: 50,
                       child: ListView.separated(
@@ -125,16 +167,21 @@ class StoreContent extends StatelessWidget {
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(width: 10);
                         },
-                        itemBuilder: (context,index){
+                        itemBuilder: (context, index) {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
                                 color: const Color.fromRGBO(31, 22, 50, 1),
-                                border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
-                                borderRadius: BorderRadius.circular(25)
-                            ),
+                                border: Border.all(
+                                    color:
+                                        const Color.fromRGBO(94, 76, 131, 1)),
+                                borderRadius: BorderRadius.circular(25)),
                             child: Center(
-                              child: Text(storeCubitAccess.sgList[index],style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
+                              child: Text(
+                                storeCubitAccess.sgList[index],
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w600),
+                              ),
                             ),
                           );
                         },
@@ -144,56 +191,81 @@ class StoreContent extends StatelessWidget {
                       child: GridView.count(
                         padding: const EdgeInsets.all(10),
                         crossAxisCount: 2,
-                        childAspectRatio: (1 / 1 ),
+                        childAspectRatio: (1 / 1),
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                         children: storeCubitAccess.sgCardList.map((e) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(0, 0, 0, 0.2),
-                              borderRadius: BorderRadius.circular(10),
-                              border: const GradientBoxBorder(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Color.fromRGBO(100, 82, 217, 1),
-                                      Color.fromRGBO(242, 73, 152, 1),
-                                    ]
+                          return InkWell(
+                            onTap: () =>
+                                storeCubitAccess.changeExchangeIsOpenedStatus(
+                                    type: "buySG", SG: e),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(0, 0, 0, 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                                border: const GradientBoxBorder(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color.fromRGBO(100, 82, 217, 1),
+                                        Color.fromRGBO(242, 73, 152, 1),
+                                      ]),
+                                  width: 1,
                                 ),
-                                width: 1,
                               ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                    width: 80,
-                                    height: 80,
-                                    child: buildSharedImageFromNetwork(e.imageUrl!,)
-                                ),
-                                const SizedBox(height: 10,),
-                                InkWell(
-                                  onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(type: "buySG",SG: e),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 10),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: SizedBox(
+                                        width: 80,
+                                        height: 80,
+                                        child: buildSharedImageFromNetwork(
+                                          e.imageUrl!,
+                                        )),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 3, horizontal: 10),
                                     decoration: BoxDecoration(
-                                        color: const Color.fromRGBO(31, 22, 50, 1),
-                                        border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
-                                        borderRadius: BorderRadius.circular(20)
-                                    ),
+                                        color:
+                                            const Color.fromRGBO(31, 22, 50, 1),
+                                        border: Border.all(
+                                            color: const Color.fromRGBO(
+                                                94, 76, 131, 1)),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Image.asset("assets/image/moon.png",width: 22,height: 20,),
-                                        const SizedBox(width: 5,),
-                                        Text("${e.amount}",style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                        Image.asset(
+                                          "assets/image/moon.png",
+                                          width: 22,
+                                          height: 20,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          "${e.amount}",
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700),
+                                        )
                                       ],
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           );
                         }).toList(),
