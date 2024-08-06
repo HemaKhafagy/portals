@@ -94,7 +94,7 @@ class StoreContent extends StatelessWidget {
                                 Text("${storeCubitAccess.starDusts[index].amount} Stardust",style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600),),
                                 InkWell(
                                   onTap: (){
-                                    storeCubitAccess.changeExchangeIsOpenedStatus(storeCubitAccess.starDusts[index]);
+                                    storeCubitAccess.changeExchangeIsOpenedStatus(type: "buyStarDust",sStarDust: storeCubitAccess.starDusts[index]);
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 20),
@@ -168,10 +168,14 @@ class StoreContent extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image.asset(e.imageUrl!,width: 80,height: 80,),
+                                SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: buildSharedImageFromNetwork(e.imageUrl!,)
+                                ),
                                 const SizedBox(height: 10,),
                                 InkWell(
-                                  onTap: () => storeCubitAccess.changeIsDoneStatus(),
+                                  onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(type: "buySG",SG: e),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 10),
                                     decoration: BoxDecoration(

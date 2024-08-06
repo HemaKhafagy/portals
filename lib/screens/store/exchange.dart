@@ -53,7 +53,7 @@ class Exchange extends StatelessWidget {
                         child: buildPointsComponents(stardust),
                       ),
                       InkWell(
-                        onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(null),
+                        onTap: () => storeCubitAccess.changeExchangeIsOpenedStatus(type: "clear"),
                         child: Container(
                           padding: const EdgeInsets.all(3.0),
                           decoration: const BoxDecoration(
@@ -97,13 +97,18 @@ class Exchange extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              const SizedBox(height: 30,),
-                              Text(selectedAvatarName,style: const TextStyle(fontSize: 30,fontWeight: FontWeight.w700),),
-                              const SizedBox(height: 5,),
-                              const Text("Avatar",style:  TextStyle(fontSize: 16,fontWeight: FontWeight.w700,color: Color.fromRGBO(242, 132, 92, 1)),),
-                              const SizedBox(height: 10,),
-                              const Text("Premium Avatar, to show the dance floor who’s the APEX predator",style:  TextStyle(fontSize: 14,fontWeight: FontWeight.w500),textAlign: TextAlign.center,),
-                              const SizedBox(height: 30,),
+                              if(selectedAvatarName != "buySG")
+                              Column(
+                                children: [
+                                  const SizedBox(height: 30,),
+                                  Text(selectedAvatarName,style: const TextStyle(fontSize: 30,fontWeight: FontWeight.w700),),
+                                  const SizedBox(height: 5,),
+                                  const Text("Avatar",style:  TextStyle(fontSize: 16,fontWeight: FontWeight.w700,color: Color.fromRGBO(242, 132, 92, 1)),),
+                                  const SizedBox(height: 10,),
+                                  const Text("Premium Avatar, to show the dance floor who’s the APEX predator",style:  TextStyle(fontSize: 14,fontWeight: FontWeight.w500),textAlign: TextAlign.center,),
+                                  const SizedBox(height: 30,),
+                                ],
+                              ),
                               Container(
                                 width: screenWidth*0.8,
                                 padding: const EdgeInsets.all(3),
@@ -112,14 +117,23 @@ class Exchange extends StatelessWidget {
                                     border: Border.all(color: const Color.fromRGBO(94, 76, 131, 1)),
                                     borderRadius: BorderRadius.circular(50)
                                 ),
-                                child: Row(
+                                child: storeCubitAccess.buySGIsLoading ? Center(child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                )) :
+                                Row(
                                   mainAxisAlignment: storeCubitAccess.isExchanged ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
                                   children: [
                                     buildSharedButton(buttonName: "EXCHANGE", isEnabled: true, width: screenWidth*0.4,height: 40,action: () async{
                                       storeCubitAccess.changeIsExchangedStatus();
                                       await Future.delayed(Duration(seconds: 1));
-                                      storeCubitAccess.changeExchangeIsOpenedStatus(storeCubitAccess.selectedStarDust);
-                                      storeCubitAccess.buyRequest(context, storeCubitAccess.selectedStarDust!.id!);
+                                      if(selectedAvatarName == "buySG"){
+                                        await storeCubitAccess.buyStickersAndGifts(storeCubitAccess.selectedStarDust!.amount!);
+                                      }else{
+                                        storeCubitAccess.buyRequest(context, storeCubitAccess.selectedStarDust!.id!);
+                                      }
+                                      storeCubitAccess.changeExchangeIsOpenedStatus(type: "close");
+                                      // storeCubitAccess.changeExchangeIsOpenedStatus(storeCubitAccess.selectedStarDust);
                                       storeCubitAccess.changeIsExchangedStatus();
                                     }),
                                     if(!storeCubitAccess.isExchanged)
