@@ -4,6 +4,7 @@ import 'package:Portals/models/document_info.dart';
 import 'package:Portals/models/portals.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -111,12 +112,14 @@ void changeANPASdRange({required SubAgeRange value})
   Future<void> submitNewPortalAdding({required BuildContext context}) async
   {
     changeSubmitIsLoadingStatus();
+    final user = FirebaseAuth.instance.currentUser;
     CollectionReference colRef = FirebaseFirestore.instance.collection("Portals");
     DocumentReference docRef = FirebaseFirestore.instance.collection("Portals").doc();
     await uploadPortalImage(portalId: docRef.id,key: "portalProfile", context: context,file: selectedPortalPic!);
     Portals newPortal = Portals(
         documentInfo: DocumentInfo(
-            createdBy: docRef.id,
+            createdBy: user!.uid,
+            portalID: docRef.id,
             createdOn: DateTime.now()
         ),
         title: portalNameController.text,

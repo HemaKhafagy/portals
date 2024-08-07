@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/screens/chat/chat_screen.dart';
 import 'package:Portals/screens/splash_scree.dart';
+import 'package:Portals/shared/cach_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,6 +41,7 @@ void main() async {
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  CashHelper.init();
 
   Bloc.observer = MyBlocObserver();
   runApp(MultiBlocProvider(providers: [

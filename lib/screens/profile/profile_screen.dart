@@ -86,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                                             Container(
                                               width: 170,
                                               child: Text(
-                                                "${homeTapsCubitAccess.userData!.firstName} ${homeTapsCubitAccess.userData!.lastName} aaaaaaa",
+                                                "${homeTapsCubitAccess.userData!.firstName} ${homeTapsCubitAccess.userData!.lastName}",
                                                 style: TextStyle(
                                                     overflow:
                                                         TextOverflow.ellipsis,

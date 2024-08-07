@@ -96,14 +96,11 @@ class _SplashScreenState extends State<SplashScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  navigateTo(
-                                      context: context,
-                                      widget: const SignInScreen());
+                                  navigateTo(context: context, widget: const SignInScreen());
                                 },
                                 child: const Text(
                                   "Sign in",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                 ),
                               ),
                               Column(
@@ -112,9 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                       buttonName: "Join Portals",
                                       isEnabled: true,
                                       action: () {
-                                        navigateTo(
-                                            context: context,
-                                            widget: const SignUpPersonaInfo());
+                                        navigateTo(context: context, widget: const SignUpPersonaInfo());
                                       }),
                                   const SizedBox(
                                     height: 15,
@@ -122,25 +117,18 @@ class _SplashScreenState extends State<SplashScreen> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      buildTermsAndConditionText(
-                                          "By joining Portals you agree to our",
-                                          false),
+                                      buildTermsAndConditionText("By joining Portals you agree to our", false),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           InkWell(
                                             onTap: () {},
-                                            child: buildTermsAndConditionText(
-                                                "Terms & Conditions", true),
+                                            child: buildTermsAndConditionText("Terms & Conditions", true),
                                           ),
-                                          buildTermsAndConditionText(
-                                              " and ", false),
+                                          buildTermsAndConditionText(" and ", false),
                                           InkWell(
                                             onTap: () {},
-                                            child: buildTermsAndConditionText(
-                                                "Privacy Policy", true),
-                                          )
+                                            child: buildTermsAndConditionText("Privacy Policy", true),)
                                         ],
                                       )
                                     ],

@@ -10,9 +10,12 @@ import 'package:Portals/screens/leader_boards/leader_boards_screen.dart';
 import 'package:Portals/screens/portals_config/protals_home.dart';
 import 'package:Portals/screens/profile/profile_screen.dart';
 import 'package:Portals/screens/videos/explore_screen.dart';
+import 'package:Portals/shared/cach_helper.dart';
 import 'package:Portals/shared/components.dart';
 import 'package:Portals/shared/notification_handler.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +30,8 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
   HomeTapsCubit() : super(HomeTapsCubitInitialState());
 
   static HomeTapsCubit get(context) => BlocProvider.of(context);
+
+
 
 //****************************************************************************
 // SPLASH SCREEN VARIABLES AMD STATES
@@ -61,10 +66,8 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
         .doc(user!.uid)
         .get()
         .then((value) async {
+      print("START USER DATA");
       userData = UserModel.fromJson(value.data()!);
-      // var ref = FirebaseStorage.instance.ref().child("${user.uid}/data/profile");
-      // await ref.getDownloadURL().;
-      // userData!.imageURL = (await ref.getDownloadURL()).toString();
       await getUserImage(user.uid);
     }).catchError((error) {
       // handel your error

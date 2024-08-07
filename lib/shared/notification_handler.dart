@@ -15,23 +15,23 @@ class NotificationHandler
     description: 'This channel is used for portals important notifications.',
   );
 
-  static Future<void> saveTokenToDatabase() async {
-    String token = "";
-    await FirebaseMessaging.instance.getToken().then((value) {
-      if(value != null) token = value;
-    });
-    final user = FirebaseAuth.instance.currentUser;
-    if(user != null && token.isNotEmpty){
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user.uid)
-          .update({
-        'token': token,
-      }).catchError((error){
-        print("UNABLE TO UPDATE DEVICE TOKEN");
-      });
-    }
-  }
+  // static Future<void> saveTokenToDatabase() async {
+  //   String token = "";
+  //   await FirebaseMessaging.instance.getToken().then((value) {
+  //     if(value != null) token = value;
+  //   });
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if(user != null && token.isNotEmpty){
+  //     await FirebaseFirestore.instance
+  //         .collection('Users')
+  //         .doc(user.uid)
+  //         .update({
+  //       'token': token,
+  //     }).catchError((error){
+  //       print("UNABLE TO UPDATE DEVICE TOKEN");
+  //     });
+  //   }
+  // }
 
   static Future handelNotification() async
   {
@@ -86,7 +86,7 @@ class NotificationHandler
     );
 
     FirebaseMessaging.instance.subscribeToTopic("MessageToAll");
-    await saveTokenToDatabase();
+    // await saveTokenToDatabase();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
       final user = FirebaseAuth.instance.currentUser;
       RemoteNotification? notification = message.notification;

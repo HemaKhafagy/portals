@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/screens/signup/create_avatar_screen.dart';
+import 'package:Portals/shared/cach_helper.dart';
 import 'package:Portals/shared/notification_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Portals/models/document_info.dart';
@@ -9,6 +10,8 @@ import 'package:Portals/models/user_model.dart';
 import 'package:Portals/screens/signup/assign_date_of_birth.dart';
 import 'package:Portals/screens/signup/otp_screen.dart';
 import 'package:Portals/shared/components.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -192,8 +195,7 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
   }
 
   TextEditingController OTPController = TextEditingController();
-  Future signUpWithPhoneNumber(
-      BuildContext context, String pin, bool isSignIn) async {
+  Future signUpWithPhoneNumber(BuildContext context, String pin, bool isSignIn) async {
     changeVerifyPhoneNumberIsLoadingStatus();
     if (signUpPhoneNumberVerificationId == null) {
       OTPController.clear();
@@ -211,21 +213,20 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
           ]);
     } else {
       try {
-        PhoneAuthCredential credential = PhoneAuthProvider.credential(
-            verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
-        await FirebaseAuth.instance
-            .signInWithCredential(credential)
-            .then((UserCredential value) async {
-          NotificationHandler.saveTokenToDatabase();
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: signUpPhoneNumberVerificationId, smsCode: pin);
+        await FirebaseAuth.instance.signInWithCredential(credential).then((UserCredential value) async {
+          // NotificationHandler.saveTokenToDatabase();
           if (isSignIn) {
             await FirebaseFirestore.instance
                 .collection("Users")
                 .doc(value.user!.uid)
                 .get()
-                .then((value) {
+                .then((value) async {
               if (value.exists) {
-                navigateToAndCloseCurrent(
-                    context: context, widget: const HomeTabsScreen());
+                // SAVE DEVICE TOKENS AND GET STREAM USER TOKEN
+                saveTokens();
+                // navigateToAndCloseCurrent(context: context, widget: const HomeTabsScreen());
+                await HomeTapsCubit.get(context).checkUserExistence(context);
               } else {
                 showSharedAlertDialog(
                     title: "You are not a member of portals app",
@@ -242,8 +243,7 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
               }
             });
           } else {
-            navigateToAndCloseCurrent(
-                context: context, widget: const AssignDateOfBirth());
+            navigateToAndCloseCurrent(context: context, widget: const AssignDateOfBirth());
           }
         });
       } on FirebaseAuthException catch (error) {
@@ -291,16 +291,11 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
         about: "",
         numFriends: 0,
         victories: 0);
-    await colRef
-        .doc(auth.currentUser!.uid)
-        .set(userData.toJson())
-        .then((value) {
+    await colRef.doc(auth.currentUser!.uid).set(userData.toJson()).then((value) {
       changeSubmittingIsLoadingStatus();
-      navigateToAndCloseCurrent(
-          context: context, widget: const CreateAvatarScreen());
+      navigateToAndCloseCurrent(context: context, widget: const CreateAvatarScreen());
     }).catchError((error) {
-      print(
-          "ERORR FROM submitSignUp FUNCTION CHECK IT ................................");
+      print("ERORR FROM submitSignUp FUNCTION CHECK IT ................................");
       print(error);
     });
   }
@@ -322,9 +317,9 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
       key == "avatar"
           ? await ref.putString(avatar!)
           : await ref.putData(bytes!);
-      // navigateAndFinish(context: context, widget: const HomeTabsScreen());
-      await HomeTapsCubit()
-        ..checkUserExistence(context);
+      // SAVE DEVICE TOKENS AND GET STREAM USER TOKEN
+      saveTokens();
+      await HomeTapsCubit.get(context).checkUserExistence(context);
     } catch (error) {
       showSharedAlertDialog(
           title: "photo can't uploaded",
@@ -342,4 +337,41 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
       // navigateAndFinish(context: context, widget: const HomeTabsScreen());
     }
   }
+
+//****************************************************************************
+// Tokens
+//****************************************************************************
+  saveTokens() async{
+    final user = FirebaseAuth.instance.currentUser;
+    FirebaseMessaging.instance.getToken().then((value) {
+      if(value != null){
+        CashHelper.saveDataFromSharedPref(key: "deviceToken", value: value);
+        FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+          "deviceToken": value
+        }).then((resValue) async {
+
+        }).catchError((error) {
+
+        });
+      }
+    }).catchError((error){
+
+    });
+    try{
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('userChatToken');
+      final resp = await callable.call(<String, dynamic>{
+        'id': user!.uid,
+      });
+      CashHelper.saveDataFromSharedPref(key: "getStreamToken", value: resp.data);
+    }catch(error){
+      // print("Error...........................");
+      // print(error.toString());
+    }
+  }
+
+  clearTokens() {
+
+  }
+//****************************************************************************
+
 }
