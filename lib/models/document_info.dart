@@ -1,21 +1,21 @@
 class DocumentInfo
 {
+  String ? documentId;
   String ? createdBy;
-  String ? portalID;
   DateTime ? createdOn;
 
-  DocumentInfo({required this.createdBy,required this.createdOn,this.portalID});
+  DocumentInfo({required this.createdBy,required this.createdOn,this.documentId});
 
   DocumentInfo.fromJson(Map<String,dynamic> json)
   {
     createdBy = json["createdBy"];
-    createdOn = json["createdOn"];
-    if(json["portalID"] != null)  portalID = json["portalID"];
+    createdOn = json["createdOn"].toDate();
+    if(json["documentId"] != null)  documentId = json["documentId"];
   }
 
   Map<String,dynamic> toJson() => {
     "createdBy": createdBy,
     "createdOn": createdOn,
-    if(portalID != null) "portalID": portalID
+    if(documentId != null) "documentId": documentId
   };
 }

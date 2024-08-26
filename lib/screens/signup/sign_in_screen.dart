@@ -83,7 +83,9 @@ class SignInScreen extends StatelessWidget {
                     ),
                     Column(
                       children: [
-                        buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){signUPCubitAccess.personalInfoSubmit(context,true);}),
+                        buildSharedButton(buttonName: "Continue", isEnabled: true, action: (){
+                          signUPCubitAccess.personalInfoSubmit(context,true);
+                        }),
                       ],
                     ),
                   ],

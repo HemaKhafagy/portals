@@ -29,6 +29,11 @@ sharedToast({required String text}) => Fluttertoast.showToast(
     textColor: Colors.white,
     fontSize: 16.0);
 
+Widget buildIOSLoader({
+  double radius = 20.0,
+  color = CupertinoColors.activeBlue,
+}) => CupertinoActivityIndicator(radius: radius, color: color);
+
 Widget buildSharedButton({
   required String buttonName,
   required bool isEnabled,

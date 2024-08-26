@@ -31,7 +31,7 @@ class FriendsScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 80,left: 10,right: 10,bottom: 10),
                   child: Column(
                     children: [
-                      buildTopNav(context),
+                      buildTopNav(context,homeTapsCubitAccess),
                       const SizedBox(height: 20,),
                       buildPortal(homeTapsCubitAccess),
                       const SizedBox(height: 20,),
@@ -126,7 +126,7 @@ Widget buildCardItem(BuildContext context,int index,HomeTapsCubit homeTapsCubitA
     ],
   );
 
-  Widget buildTopNav(BuildContext context) =>  Row(
+  Widget buildTopNav(BuildContext context,HomeTapsCubit homeTapsCubitAccess) =>  Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Container(
@@ -155,7 +155,7 @@ Widget buildCardItem(BuildContext context,int index,HomeTapsCubit homeTapsCubitA
         children: [
           GestureDetector(
             onTap: (){
-              navigateTo(context: context, widget: const AddFriendScreen());
+              navigateTo(context: context, widget: AddFriendScreen(userData: homeTapsCubitAccess.userData!,));
             },
             child: Container(
               width: 130,

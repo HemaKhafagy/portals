@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:Portals/layout/cubit/cubit.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
 import 'package:Portals/models/document_info.dart';
+import 'package:Portals/models/portal_guests.dart';
 import 'package:Portals/models/portals.dart';
+import 'package:Portals/screens/chat/cubit/cubit.dart';
 import 'package:Portals/screens/portals_config/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -109,6 +112,26 @@ void changeANPASdRange({required SubAgeRange value})
     submitIsLoading = !submitIsLoading;
     emit(ChangeSubmitIsLoadingStatus());
   }
+
+  Future addPortalCreationHost(String userId,String portalId,BuildContext context) async
+  {
+    HomeTapsCubit homeTapsCubitAccess = HomeTapsCubit.get(context);
+    PortalGuests guest = PortalGuests(
+        documentInfo: DocumentInfo(createdBy: userId, createdOn: DateTime.now()),
+        guestInfo: GuestInfo(codename: "", status: "host", mutedOn: null),
+        userInfo: UserInf(name: homeTapsCubitAccess.userData!.firstName, imageUrl: homeTapsCubitAccess.userData!.imageUrl, gender: homeTapsCubitAccess.userData!.gender, dateOfBirth: homeTapsCubitAccess.userData!.dateOfBirth)
+    );
+    FirebaseFirestore.instance.collection("Portals")
+        .doc(portalId)
+        .collection("Guests")
+        .doc(userId).set(guest.toJson())
+        .then((value) {
+
+        }).catchError((error){
+
+        });
+  }
+
   Future<void> submitNewPortalAdding({required BuildContext context}) async
   {
     changeSubmitIsLoadingStatus();
@@ -119,19 +142,22 @@ void changeANPASdRange({required SubAgeRange value})
     Portals newPortal = Portals(
         documentInfo: DocumentInfo(
             createdBy: user!.uid,
-            portalID: docRef.id,
+            documentId: docRef.id,
             createdOn: DateTime.now()
         ),
         title: portalNameController.text,
         topic: topicSelectedValue,
         guests: SubGuests(guestCount: 1, limit: 20),
         ageRange: ageSelectedValues,
+        guestIds: [user.uid],
         isPrivate: switchButtonSelectedValue == "No" ? false : true,
         themeRef: "s",
         imageUrl: portalImageUrl,
         endTime: DateTime.now()
     );
-    await colRef.doc(docRef.id).set(newPortal.toJson()).then((value) {
+    await colRef.doc(docRef.id).set(newPortal.toJson()).then((value) async{
+      ChatCubit()..createChatChannel(docRef.id,user.uid,[user.uid]);
+      await addPortalCreationHost(user.uid,docRef.id,context);
       changeSubmitIsLoadingStatus();
       print("ADDING SUCCESS FROM submitNewPortalAdding FUNCTION CHECK IT ................................");
       navigateAndFinish(context: context, widget: const HomeTabsScreen());

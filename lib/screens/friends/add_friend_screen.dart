@@ -1,3 +1,4 @@
+import 'package:Portals/models/user_model.dart';
 import 'package:Portals/screens/friends/cubit/cubit.dart';
 import 'package:Portals/screens/friends/cubit/states.dart';
 import 'package:Portals/shared/components.dart';
@@ -10,14 +11,15 @@ import 'package:share_plus/share_plus.dart';
 
 
 class AddFriendScreen extends StatelessWidget {
-  const AddFriendScreen({super.key});
+  UserModel userData;
+  AddFriendScreen({super.key, required this.userData});
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return BlocProvider(
-      create: (BuildContext context) => FriendsCubit(),
+      create: (BuildContext context) => FriendsCubit()..getUsers(),
       child: BlocConsumer<FriendsCubit,FriendsCubitStates>(
         listener: (context,state){},
         builder: (context,state){
@@ -27,7 +29,8 @@ class AddFriendScreen extends StatelessWidget {
               decoration: sharedContainerDecoration,
               width: screenWidth,
               height: screenHeight,
-              child: Padding(
+              child: friendsCubitAccessInstance.getUsersIsLoading ? Center(child: buildIOSLoader()) :
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 60,horizontal: 10),
                 child: Card(
                   shape: RoundedRectangleBorder(
@@ -67,7 +70,7 @@ class AddFriendScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               InkWell(
-                                onTap: (){},
+                                onTap: (){Navigator.of(context).pop();},
                                 child: const Row(
                                   children: [
                                     Icon(Icons.arrow_back_ios_new),
@@ -78,7 +81,7 @@ class AddFriendScreen extends StatelessWidget {
                               ),
                               const Text("Add Friends",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700),),
                               InkWell(
-                                onTap: (){},
+                                onTap: (){Navigator.of(context).pop();},
                                 child: const Icon(Icons.close),
                               )
                             ],
@@ -168,7 +171,10 @@ class AddFriendScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(child: Text(friendsCubitAccessInstance.listOfNewFriendsCard[index].name!,style: const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w800))),
-                buildSharedButton(buttonName: "Add Friend", isEnabled: true, width: 100,height: 30,textSize: 14,action: (){})
+                (friendsCubitAccessInstance.addFriendsIsLoading && friendsCubitAccessInstance.currentLoadingIndex == index) ? buildIOSLoader() :
+                buildSharedButton(buttonName: "Add Friend", isEnabled: true, width: 100,height: 30,textSize: 14,action: (){
+                  friendsCubitAccessInstance.addUser(friendsCubitAccessInstance.listOfNewFriendsCard[index], index,userData);
+                })
               ],
             ),
           Text(friendsCubitAccessInstance.listOfNewFriendsCard[index].gender!,style: const TextStyle(color: Colors.white,fontSize: 12),overflow: TextOverflow.ellipsis,maxLines: 2,)

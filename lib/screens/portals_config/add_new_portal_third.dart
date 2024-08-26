@@ -16,7 +16,7 @@ class AddNewPortalThird extends StatelessWidget {
       listener: (context,state){},
       builder: (context,state){
         PortalsConfigCubit portalsCCAInstance = PortalsConfigCubit.get(context);
-        return portalsCCAInstance.submitIsLoading ? buildSharedShimmer() :
+        return portalsCCAInstance.submitIsLoading ? buildIOSLoader() :
           Column(
           children: [
             Expanded(

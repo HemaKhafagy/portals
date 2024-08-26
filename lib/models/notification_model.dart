@@ -15,18 +15,19 @@ class NotificationModel
 
   NotificationModel.fromJson(Map<String,dynamic> json)
   {
+    documentInfo = DocumentInfo.fromJson(json["documentInfo"]);
     type = json["type"];
-    notificationSender = NotificationSender.fromJson(json["notificationSender"]);
-    gameInvite = GameInvite.fromJson(json["gameInvite"]);
-    portalInvite = PortalInvite.fromJson(json["portalInvite"]);
-    portalAccessRequest = PortalAccessRequest.fromJson(json["portalAccessRequest"]);
+    if(json["sender"] != null) notificationSender = NotificationSender.fromJson(json["sender"]);
+    if(json["gameInvite"] != null) gameInvite = GameInvite.fromJson(json["gameInvite"]);
+    if(json["portalInvite"] != null) portalInvite = PortalInvite.fromJson(json["portalInvite"]);
+    if(json["portalAccessRequest"] != null) portalAccessRequest = PortalAccessRequest.fromJson(json["portalAccessRequest"]);
     statusMap = StatusMap.fromJson(json["statusMap"]);
   }
 
   Map<String,dynamic> toJson() => {
     "documentInfo": documentInfo!.toJson(),
     "type": type,
-    "notificationSender": notificationSender!.toJson(),
+    // "notificationSender": notificationSender!.toJson(),
     "gameInvite": gameInvite!.toJson(),
     "portalInvite": portalInvite!.toJson(),
     "portalAccessRequest": portalAccessRequest!.toJson(),
@@ -40,6 +41,7 @@ class NotificationSender
   String ? verifiedOn;
   String ? name;
   String ? imageUrl;
+  String ? id;
   int ? age;
 
   NotificationSender({required this.verifiedOn,required this.name,required this.imageUrl,required this.age});
@@ -48,6 +50,7 @@ class NotificationSender
     verifiedOn = json["verifiedOn"];
     name = json["name"];
     imageUrl = json["imageUrl"];
+    id = json["id"];
     age = json["age"];
   }
 
@@ -55,6 +58,7 @@ class NotificationSender
     "verifiedOn": verifiedOn,
     "name": name,
     "imageUrl": imageUrl,
+    "id": id,
     "age": age,
   };
 }
@@ -81,17 +85,20 @@ class PortalInvite
 {
   String ? portalRef;
   String ? portalTitle;
+  String ? imageUrl;
 
-  PortalInvite({required this.portalRef,required this.portalTitle});
+  PortalInvite({required this.portalRef,required this.portalTitle,required this.imageUrl});
 
   PortalInvite.fromJson(Map<String,dynamic> json){
     portalRef = json['portalRef'];
     portalTitle = json['portalTitle'];
+    imageUrl = json['imageUrl'];
   }
 
   Map<String,dynamic> toJson() => {
     "portalRef": portalRef,
     "portalTitle": portalTitle,
+    "imageUrl": imageUrl,
   };
 }
 

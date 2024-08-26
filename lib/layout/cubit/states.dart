@@ -67,5 +67,13 @@ class ChangePlayAndPauseVideoState extends HomeTapsCubitStates {}
 class ChangeProfileDetailsIsOpenedState extends HomeTapsCubitStates {}
 class ChangeUpdateUserDataIsLoadingState extends HomeTapsCubitStates {}
 
+
 //****************************************************************************
+//****************************************************************************
+
+//****************************************************************************
+//NOTIFICATION SCREEN VARIABLES AMD STATES
+//****************************************************************************
+class ChangeGetNotificationIsLoadingState extends HomeTapsCubitStates {}
+class ChangeNotificationActionIsLoadingState extends HomeTapsCubitStates {}
 //****************************************************************************

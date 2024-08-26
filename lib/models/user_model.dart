@@ -8,7 +8,7 @@ class UserModel
 {
 
   DocumentInfo ? documentInfo;
-  String ? imageURL;
+  String ? imageUrl;
   String ? firstName;
   String ? lastName;
   String ? email;
@@ -28,7 +28,7 @@ class UserModel
 
   UserModel({
     this.documentInfo,
-    this.imageURL,
+    this.imageUrl,
     required this.firstName,
     required this.lastName,
     required this.email,
@@ -46,6 +46,8 @@ class UserModel
 
   UserModel.fromJson(Map<String,dynamic> json)
   {
+    documentInfo = DocumentInfo.fromJson(json["documentInfo"]);
+    imageUrl = json["imageUrl"];
     firstName = json["firstName"];
     lastName = json["lastName"];
     email = json["email"];

@@ -323,11 +323,11 @@ class ProfileScreen extends StatelessWidget {
                               height: screenHeight * 0.18,
                               child: ClipOval(
                                 child: buildSharedImageFromNetwork(
-                                    homeTapsCubitAccess.userData!.imageURL ==
+                                    homeTapsCubitAccess.userData!.imageUrl ==
                                             null
                                         ? ""
                                         : homeTapsCubitAccess
-                                            .userData!.imageURL!,
+                                            .userData!.imageUrl!,
                                     errorWidget: Center(
                                       child: Image.asset(
                                           "assets/image/profile.png",

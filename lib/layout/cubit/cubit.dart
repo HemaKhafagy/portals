@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'package:Portals/layout/cubit/states.dart';
 import 'package:Portals/layout/home_taps_screen.dart';
+import 'package:Portals/models/document_info.dart';
 import 'package:Portals/models/friends_card_model.dart';
 import 'package:Portals/models/leader_boards_model.dart';
+import 'package:Portals/models/notification_model.dart';
+import 'package:Portals/models/portal_guests.dart';
 import 'package:Portals/models/portals.dart';
 import 'package:Portals/models/user_model.dart';
+import 'package:Portals/screens/chat/cubit/cubit.dart';
 import 'package:Portals/screens/friends/friends_screen.dart';
 import 'package:Portals/screens/leader_boards/leader_boards_screen.dart';
 import 'package:Portals/screens/portals_config/protals_home.dart';
 import 'package:Portals/screens/profile/profile_screen.dart';
 import 'package:Portals/screens/videos/explore_screen.dart';
-import 'package:Portals/shared/cach_helper.dart';
 import 'package:Portals/shared/components.dart';
 import 'package:Portals/shared/notification_handler.dart';
 import 'package:bloc/bloc.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +30,6 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
   HomeTapsCubit() : super(HomeTapsCubitInitialState());
 
   static HomeTapsCubit get(context) => BlocProvider.of(context);
-
 
 
 //****************************************************************************
@@ -68,7 +67,7 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
         .then((value) async {
       print("START USER DATA");
       userData = UserModel.fromJson(value.data()!);
-      await getUserImage(user.uid);
+      // await getUserImage(user.uid);
     }).catchError((error) {
       // handel your error
       print("ERROR FROM GET USER DATA METHOD");
@@ -76,23 +75,23 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
     });
   }
 
-  Future getUserImage(String id) async {
-    var ref = FirebaseStorage.instance.ref().child("$id/data/profile");
-    await ref.getDownloadURL().then((value) async {
-      if (value.isEmpty) {
-        var ref1 = FirebaseStorage.instance.ref().child("$id/data/avatar");
-        await ref.getDownloadURL().then((value1) {
-          if (value1.isEmpty) {
-            userData!.imageURL = "";
-          } else {
-            userData!.imageURL = value1;
-          }
-        });
-      } else {
-        userData!.imageURL = value;
-      }
-    });
-  }
+  // Future getUserImage(String id) async {
+  //   var ref = FirebaseStorage.instance.ref().child("$id/data/profile");
+  //   await ref.getDownloadURL().then((value) async {
+  //     if (value.isEmpty) {
+  //       var ref1 = FirebaseStorage.instance.ref().child("$id/data/avatar");
+  //       await ref.getDownloadURL().then((value1) {
+  //         if (value1.isEmpty) {
+  //           userData!.imageURL = "";
+  //         } else {
+  //           userData!.imageURL = value1;
+  //         }
+  //       });
+  //     } else {
+  //       userData!.imageURL = value;
+  //     }
+  //   });
+  // }
 
   void incrementStarDustValue(int value) {
     print("incrementStarDustValue ........................................");
@@ -188,6 +187,13 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
     }
     emit(SearchForPortalsState());
   }
+
+  List<Portals> get ownedPortals =>
+      portalsList.where((element) => element.userCurrentPortalStatus == "Hosted" || element.userCurrentPortalStatus == "Guested" ||
+          element.userCurrentPortalStatus == "Invited" || element.userCurrentPortalStatus == "Pending Request").toList();
+
+  List<Portals> get explorePortals =>
+      portalsList.where((element) => element.userCurrentPortalStatus == "none").toList();
 
 //****************************************************************************
 //****************************************************************************
@@ -487,6 +493,7 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
 
   Future updateUserData(BuildContext context) async {
     changeUpdateUserDataIsLoadingState();
+    final user = FirebaseAuth.instance.currentUser;
     if (editProfileFirstNameController.text.isEmpty &&
         editProfileLastNameController.text.isEmpty &&
         editProfileEmailController.text.isEmpty &&
@@ -506,7 +513,6 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
                 }),
           ]);
     } else {
-      final user = FirebaseAuth.instance.currentUser;
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(user!.uid)
@@ -548,5 +554,150 @@ class HomeTapsCubit extends Cubit<HomeTapsCubitStates> {
     changeUpdateUserDataIsLoadingState();
   }
 //****************************************************************************
+//****************************************************************************
+
+//****************************************************************************
+// Notification VARIABLES AMD STATES
+//****************************************************************************
+  List<NotificationModel> notifications = [];
+  bool getNotificationIsLoading = false;
+
+  void changeGetNotificationIsLoadingState() {
+    getNotificationIsLoading = !getNotificationIsLoading;
+    emit(ChangeGetNotificationIsLoadingState());
+  }
+
+  Future<void> getUserNotification() async {
+    changeGetNotificationIsLoadingState();
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user!.uid)
+        .collection('Notifications')
+        .get()
+        .then((value) async {
+      print(" FROM GET USER notification");
+      print(value.docs.length);
+      notifications = [];
+      value.docs.forEach((element) {
+        notifications.add(NotificationModel.fromJson(element.data()));
+      });
+    }).catchError((error) {
+      // handel your error
+      print("ERROR FROM GET USER notification");
+      print(error);
+    });
+    changeGetNotificationIsLoadingState();
+  }
+
+  int loadingIndex = 0;
+  bool notificationActionIsLoading = false;
+
+  void changeNotificationActionIsLoadingState(int index) {
+    notificationActionIsLoading = !notificationActionIsLoading;
+    loadingIndex = index;
+    emit(ChangeNotificationActionIsLoadingState());
+  }
+
+  Future<void> addUserToGuestIds(String portalId,String userId) async
+  {
+    await FirebaseFirestore.instance.collection("Portals")
+        .doc(portalId)
+        .update({
+          "guests.guestCount": FieldValue.increment(1),
+          "guestIds" : FieldValue.arrayUnion([userId])
+        }).then((value) {
+
+        }).catchError((error){
+
+        });
+  }
+
+  Future<void> changeNotificationStatus({
+    required int index,
+    required String notificationId,
+    required String status
+  }) async {
+    if(status != "accepted") changeNotificationActionIsLoadingState(index);
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance.collection("Users")
+        .doc(user!.uid)
+        .collection("Notifications")
+        .doc(notificationId)
+        .update({
+      "statusMap.status": status
+    }).then((value) {
+      notifications[index].statusMap!.status = status;
+      if(status == "accepted"){
+        notifications[index].statusMap!.acceptedOn = DateTime.now();
+      }else{
+        notifications[index].statusMap!.rejectedOn = DateTime.now();
+      }
+    }).catchError((error){
+
+    });
+    if(status != "accepted") changeNotificationActionIsLoadingState(index);
+  }
+
+  Future<void> acceptNotification({
+    required int index,
+    required String notificationId,
+    required String portalId,
+    required String status,
+  }) async{
+    changeNotificationActionIsLoadingState(index);
+    final user = FirebaseAuth.instance.currentUser;
+    PortalGuests guest = PortalGuests(
+        documentInfo: DocumentInfo(createdBy: user!.uid, createdOn: DateTime.now()),
+        guestInfo: GuestInfo(codename: "", status: "guest", mutedOn: null),
+        userInfo: UserInf(name: userData!.firstName, imageUrl: userData!.imageUrl, gender: userData!.gender, dateOfBirth: userData!.dateOfBirth)
+    );
+    await FirebaseFirestore.instance.collection("Portals")
+        .doc(portalId)
+        .collection("Guests")
+        .doc(user.uid)
+        .set(guest.toJson())
+        .then((value) async{
+          ChatCubit()..addUserToChannel(chatId: portalId, memberId: user.uid);
+          await Future.wait([changeNotificationStatus(index: index,notificationId: notificationId,status: status),addUserToGuestIds(portalId,user.uid)]);
+        }).catchError((error){
+
+        });
+      changeNotificationActionIsLoadingState(index);
+  }
+
+  Future<void> friendRequestNotificationAction({
+    required int index,
+    required String senderId,
+    required String notificationId,
+    required String status,
+  }) async{
+    changeNotificationActionIsLoadingState(index);
+    final user = FirebaseAuth.instance.currentUser;
+    final batch = FirebaseFirestore.instance.batch();
+
+    var f1 = FirebaseFirestore.instance.collection("Users").doc(user!.uid).collection("Friends").doc(senderId);
+    batch.update(f1,{
+      "statusMap.status": status,
+      "statusMap.${status}On": DateTime.now(),
+    });
+
+    var f2 = FirebaseFirestore.instance.collection("Users").doc(senderId).collection("Friends").doc(user.uid);
+    batch.update(f2,{
+      "statusMap.status": status,
+      "statusMap.${status}On": DateTime.now(),
+    });
+
+    var f3 = FirebaseFirestore.instance.collection("Users").doc(user.uid).collection("Notifications").doc(notificationId);
+    batch.delete(f3);
+
+    await batch.commit().then((value){
+      notifications.remove(notifications[index]);
+      ChatCubit()..createChatChannel(senderId+user.uid,senderId,[senderId,user.uid]);
+    }).catchError((error){
+
+    });
+    changeNotificationActionIsLoadingState(index);
+  }
 //****************************************************************************
 }

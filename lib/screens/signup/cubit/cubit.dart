@@ -41,8 +41,7 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
   void personalInfoSubmit(BuildContext context, bool isSignIn) {
     final isValid = formKey.currentState!.validate();
     if (isValid) {
-      navigateToAndCloseCurrent(
-          context: context, widget: OTPScreen(isSignIn: isSignIn));
+      navigateToAndCloseCurrent(context: context, widget: OTPScreen(isSignIn: isSignIn));
       verifyPhoneNumber(context);
     }
     emit(PersonalInfoSubmitState());
@@ -300,6 +299,21 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
     });
   }
 
+  Future<bool> addUserImageUrl(Reference ref) async {
+    bool state = false;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    final url = await ref.getDownloadURL();
+    await FirebaseFirestore.instance.collection("Users").doc(auth.currentUser!.uid).update({
+      "imageUrl": url
+    }).then((value) {
+      state = true;
+    }).catchError((error) {
+      print("ERORR FROM Update Image URL ................................");
+      state = false;
+    });
+    return state;
+  }
+
   Future<void> addImageToFirebaseStorage(
       {required String key,
       required BuildContext context,
@@ -314,9 +328,12 @@ class SignUPCubit extends Cubit<SignUpCubitStates> {
           .child(user!.uid)
           .child("data")
           .child(key);
-      key == "avatar"
-          ? await ref.putString(avatar!)
-          : await ref.putData(bytes!);
+      key == "avatar" ? await ref.putString(avatar!) : await ref.putData(bytes!);
+      bool state = await addUserImageUrl(ref);
+      if(state == false){
+        changeSubmittingIsLoadingStatus();
+        return;
+      }
       // SAVE DEVICE TOKENS AND GET STREAM USER TOKEN
       saveTokens();
       await HomeTapsCubit.get(context).checkUserExistence(context);

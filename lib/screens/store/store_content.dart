@@ -31,7 +31,7 @@ class StoreContent extends StatelessWidget {
                     child: buildPointsComponents(
                         storeCubitAccess.userCurrentStarDusts),
                   ),
-                  buildNotificationComponent(3)
+                  SizedBox(),
                 ],
               ),
             ),
